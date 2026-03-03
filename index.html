@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Narra Health — Personal Health Maintenance Schedule</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --amber:#C2703A; --amber-light:#E8A87C; --amber-pale:#FDF3EC;
+  --forest:#2D5016; --forest-mid:#4A7C2A; --forest-light:#7AB648; --forest-pale:#F0F7E8;
+  --bark:#3D2B1F; --cream:#FDFAF6; --warm-gray:#8B7D75;
+  --border:#E8DDD6; --text:#2A1F1A; --text-muted:#7A6A62;
+  --red:#C0392B; --red-pale:#FDECEA;
+  --gold:#8B6914; --gold-pale:#FFF8E1;
+  --blue:#1B5E7B; --blue-pale:#E8F4F8;
+  --purple:#6B3FA0; --purple-pale:#F3EEFF;
+  --teal:#1A7A6B; --teal-pale:#E8F5F3;
+  --shadow:0 2px 12px rgba(61,43,31,.08); --shadow-lg:0 8px 32px rgba(61,43,31,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6}
+
+/* HEADER */
+.site-header{background:var(--bark);color:var(--cream);padding:13px 24px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.2)}
+.site-logo{font-family:'Playfair Display',serif;font-size:21px;font-weight:600;color:var(--amber-light);letter-spacing:-.3px}
+.site-logo span{color:var(--forest-light)}
+.site-tagline{font-size:12px;color:rgba(253,250,246,.55);font-weight:300;border-left:1px solid rgba(253,250,246,.15);padding-left:14px}
+.header-tool{margin-left:auto;font-size:11px;font-weight:600;color:var(--amber-light);background:rgba(194,112,58,.15);padding:3px 10px;border-radius:20px;border:1px solid rgba(232,168,124,.25);letter-spacing:.4px}
+
+/* LAYOUT */
+.main{max-width:860px;margin:0 auto;padding:28px 18px 64px}
+
+/* WIZARD STEPS */
+.wizard{display:flex;align-items:center;background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 20px;margin-bottom:24px;box-shadow:var(--shadow);gap:0}
+.wstep{display:flex;align-items:center;gap:9px;flex:1;justify-content:center}
+.wstep-num{width:26px;height:26px;border-radius:50%;background:var(--border);color:var(--text-muted);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.wstep.active .wstep-num{background:var(--forest);color:#fff}
+.wstep.done .wstep-num{background:var(--forest-light);color:#fff}
+.wstep-label{font-size:12px;font-weight:500;color:var(--text-muted);white-space:nowrap}
+.wstep.active .wstep-label{color:var(--forest);font-weight:600}
+.wstep.done .wstep-label{color:var(--forest-mid)}
+.wdiv{flex:0 0 28px;height:1px;background:var(--border);margin:0 2px}
+
+/* HERO */
+.hero{text-align:center;padding:36px 16px 28px}
+.hero-icon{width:68px;height:68px;background:linear-gradient(135deg,var(--forest),var(--forest-mid));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 18px;box-shadow:0 4px 20px rgba(45,80,22,.3)}
+.hero h1{font-family:'Playfair Display',serif;font-size:30px;font-weight:600;color:var(--bark);line-height:1.2;margin-bottom:8px}
+.hero h1 em{color:var(--amber);font-style:italic}
+.hero p{color:var(--text-muted);font-size:14px;max-width:520px;margin:0 auto 20px;font-weight:300}
+.hero-pills{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}
+.hero-pill{background:#fff;border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--text-muted);font-weight:500}
+
+/* CARD */
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 26px;margin-bottom:18px;box-shadow:var(--shadow)}
+.card-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--bark);margin-bottom:3px;display:flex;align-items:center;gap:9px}
+.card-sub{font-size:13px;color:var(--text-muted);margin-bottom:18px;font-weight:300}
+
+/* FORM */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.fgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px}
+@media(max-width:580px){.fgrid,.fgrid3{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px}
+.field input,.field select{border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
+.field input:focus,.field select:focus{border-color:var(--forest-mid);background:#fff}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.chip{display:flex;align-items:center;gap:6px;background:var(--cream);border:1.5px solid var(--border);border-radius:20px;padding:5px 12px;cursor:pointer;font-size:13px;color:var(--text);transition:all .15s;user-select:none;font-weight:400;line-height:1.2}
+.chip:hover{border-color:var(--forest-mid);background:var(--forest-pale)}
+.chip.on{border-color:var(--forest);background:var(--forest-pale);color:var(--forest);font-weight:500}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background .15s}
+.chip.on .dot{background:var(--forest)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s;text-decoration:none}
+.btn-primary{background:var(--forest);color:#fff;box-shadow:0 2px 8px rgba(45,80,22,.3)}
+.btn-primary:hover{background:var(--forest-mid);transform:translateY(-1px)}
+.btn-secondary{background:#fff;color:var(--text);border:1.5px solid var(--border)}
+.btn-secondary:hover{border-color:var(--forest-mid);background:var(--forest-pale)}
+.btn-amber{background:var(--amber);color:#fff;box-shadow:0 2px 8px rgba(194,112,58,.3)}
+.btn-amber:hover{background:#A85E2E;transform:translateY(-1px)}
+.btn-sm{padding:6px 13px;font-size:13px;border-radius:8px}
+.btn-row{display:flex;gap:11px;margin-top:22px;justify-content:flex-end}
+
+/* RESULTS */
+.res-header{background:linear-gradient(135deg,var(--forest) 0%,var(--bark) 100%);color:#fff;border-radius:14px;padding:26px 30px;margin-bottom:20px;display:flex;align-items:center;gap:18px}
+.res-header-info h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:600;margin-bottom:3px}
+.res-header-info p{opacity:.7;font-size:13px;font-weight:300}
+
+/* PROGRESS BAR */
+.progress-wrap{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:18px;box-shadow:var(--shadow)}
+.progress-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;font-weight:500}
+.progress-label span{color:var(--forest);font-family:'DM Mono',monospace;font-size:14px}
+.progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--forest-light),var(--forest));border-radius:4px;transition:width .5s ease}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:20px}
+@media(max-width:560px){.stats{grid-template-columns:1fr 1fr}}
+.stat{background:#fff;border:1px solid var(--border);border-radius:11px;padding:14px;text-align:center;box-shadow:var(--shadow)}
+.stat-n{font-size:26px;font-weight:700;line-height:1;margin-bottom:3px}
+.stat-l{font-size:10px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.stat.s-red .stat-n{color:var(--red)}
+.stat.s-amber .stat-n{color:var(--amber)}
+.stat.s-green .stat-n{color:var(--forest)}
+.stat.s-gray .stat-n{color:var(--text-muted)}
+
+/* PRINT BAR */
+.print-bar{background:var(--bark);color:#fff;border-radius:11px;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px}
+.print-bar strong{color:var(--amber-light);display:block;font-size:14px;margin-bottom:1px}
+.print-bar p{opacity:.7;font-size:12px}
+
+/* DISCLAIMER */
+.disclaimer{background:var(--gold-pale);border:1px solid rgba(139,105,20,.25);border-radius:9px;padding:12px 16px;font-size:12px;color:var(--gold);margin-bottom:18px;line-height:1.6}
+.disclaimer strong{display:block;margin-bottom:1px}
+
+/* FILTER TABS */
+.filter-tabs{display:flex;gap:5px;margin-bottom:18px;background:#fff;border:1px solid var(--border);border-radius:11px;padding:7px;box-shadow:var(--shadow);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ftab{flex:1;min-width:fit-content;padding:7px 13px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:var(--text-muted);transition:all .15s;white-space:nowrap;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:5px;justify-content:center}
+.ftab .tc{background:var(--border);color:var(--text-muted);border-radius:9px;padding:1px 6px;font-size:10px;font-family:'DM Mono',monospace}
+.ftab.on{background:var(--forest);color:#fff}
+.ftab.on .tc{background:rgba(255,255,255,.22);color:#fff}
+.ftab:hover:not(.on){background:var(--forest-pale);color:var(--forest)}
+
+/* SCREENING ITEMS */
+.sgroup{margin-bottom:26px}
+.sgroup-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--bark);margin-bottom:11px;padding-bottom:8px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:8px}
+.sitem{background:#fff;border:1px solid var(--border);border-radius:11px;padding:15px 17px;margin-bottom:9px;display:flex;align-items:flex-start;gap:13px;box-shadow:var(--shadow);transition:box-shadow .15s}
+.sitem:hover{box-shadow:var(--shadow-lg)}
+.sitem.overdue{border-left:4px solid var(--red);background:var(--red-pale)}
+.sitem.due-soon{border-left:4px solid var(--amber);background:var(--amber-pale)}
+.sitem.upcoming{border-left:4px solid var(--forest-light);background:var(--forest-pale)}
+.sitem.not-due{border-left:4px solid #ddd}
+.sitem-icon{flex-shrink:0;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px}
+.sitem.overdue .sitem-icon{background:rgba(192,57,43,.11)}
+.sitem.due-soon .sitem-icon{background:rgba(194,112,58,.11)}
+.sitem.upcoming .sitem-icon{background:rgba(122,182,72,.11)}
+.sitem.not-due .sitem-icon{background:rgba(139,125,117,.08)}
+.sitem-body{flex:1;min-width:0}
+.sitem-name{font-weight:600;font-size:14px;color:var(--text);margin-bottom:2px}
+.sitem-detail{font-size:12.5px;color:var(--text-muted);margin-bottom:7px;line-height:1.55}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.tag{font-size:10.5px;font-weight:500;padding:2px 8px;border-radius:9px;font-family:'DM Mono',monospace}
+.tag-red{background:var(--red-pale);color:var(--red);border:1px solid rgba(192,57,43,.18)}
+.tag-amber{background:var(--amber-pale);color:var(--amber);border:1px solid rgba(194,112,58,.18)}
+.tag-green{background:var(--forest-pale);color:var(--forest);border:1px solid rgba(74,124,42,.18)}
+.tag-blue{background:var(--blue-pale);color:var(--blue);border:1px solid rgba(27,94,123,.18)}
+.tag-gray{background:#f0ece8;color:var(--warm-gray);border:1px solid var(--border)}
+.tag-gold{background:var(--gold-pale);color:var(--gold);border:1px solid rgba(139,105,20,.18)}
+.tag-purple{background:var(--purple-pale);color:var(--purple);border:1px solid rgba(107,63,160,.18)}
+.tag-teal{background:var(--teal-pale);color:var(--teal);border:1px solid rgba(26,122,107,.18)}
+
+/* LAST DONE ROW */
+.last-done-row{display:flex;align-items:center;gap:9px;padding-top:8px;border-top:1px solid rgba(0,0,0,.06);flex-wrap:wrap}
+.last-done-row label{font-size:11px;color:var(--text-muted);white-space:nowrap;font-weight:500}
+.last-done-row input[type=date]{border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:12px;font-family:'DM Mono',monospace;background:rgba(255,255,255,.7);color:var(--text);outline:none;width:140px}
+.last-done-row input:focus{border-color:var(--forest-mid)}
+.next-due{font-size:11px;color:var(--forest-mid);font-weight:500;margin-left:auto}
+a.src-link{font-size:11px;color:var(--forest-mid);text-decoration:none;opacity:.8}
+.tool-link { font-size:11px; color:var(--amber); text-decoration:none; white-space:nowrap; font-weight:600; background:var(--amber-pale); border:1px solid rgba(194,112,58,0.25); border-radius:6px; padding:2px 8px; }
+.tool-link:hover { background:var(--amber-light); color:white; }
+a.src-link:hover{text-decoration:underline;opacity:1}
+.done-badge{font-size:11px;background:var(--forest-pale);color:var(--forest);border:1px solid rgba(74,124,42,.2);border-radius:9px;padding:2px 9px;font-weight:500;display:none}
+
+/* PAGE CONTROL */
+.page{display:none}
+.page.active{display:block}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.ani{animation:fadeUp .3s ease both}
+.ani:nth-child(1){animation-delay:.04s}
+.ani:nth-child(2){animation-delay:.08s}
+.ani:nth-child(3){animation-delay:.13s}
+.ani:nth-child(4){animation-delay:.18s}
+.ani:nth-child(5){animation-delay:.23s}
+.ani:nth-child(6){animation-delay:.28s}
+.ani:nth-child(7){animation-delay:.33s}
+
+/* PRINT */
+@media print{
+  .site-header,.btn-row,.filter-tabs,.print-bar,.wizard,.hero,.no-print,
+  .last-done-row a,.last-done-row .next-due{display:none!important}
+  body{background:#fff;font-size:11px}
+  .main{padding:0;max-width:100%}
+  .card,.sitem{box-shadow:none;border:1px solid #ccc;page-break-inside:avoid}
+  .res-header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .stats{grid-template-columns:repeat(4,1fr)}
+  .last-done-row{display:flex!important}
+}
+
+/* ── ROS specific ── */
+.chip.ros-sensitive { border-color: rgba(184,50,50,0.3); }
+.chip.ros-sensitive.on { background: var(--red-pale); border-color: var(--red); color: var(--red); }
+.chip.ros-sensitive.on .dot { background: var(--red); }
+.ros-summary { background: white; border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; margin-bottom: 20px; box-shadow: var(--shadow); }
+.ros-summary-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; color: var(--bark); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1.5px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.ros-system { margin-bottom: 14px; }
+.ros-system-name { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+.ros-symptom-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.ros-symptom-tag { background: var(--amber-pale); border: 1px solid rgba(194,112,58,0.25); border-radius: 20px; padding: 4px 12px; font-size: 13px; color: var(--amber); font-weight: 500; }
+.ros-symptom-tag.urgent { background: var(--red-pale); border-color: rgba(184,50,50,0.25); color: var(--red); }
+.ros-none { color: var(--text-muted); font-style: italic; font-size: 13px; }
+.ros-other-text { background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--text); line-height: 1.6; margin-top: 6px; white-space: pre-wrap; }
+.ros-flag { background: var(--red-pale); border: 1px solid rgba(184,50,50,0.2); border-radius: 10px; padding: 12px 16px; margin-bottom: 14px; font-size: 13px; color: var(--red); line-height: 1.6; }
+.ros-flag strong { display: block; margin-bottom: 3px; font-size: 14px; }
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-logo">Narra<span>Health</span></div>
+  <div class="site-tagline">Narrative Health · BC &amp; Canada</div>
+  <div class="header-tool">Health Maintenance</div>
+</header>
+
+<div class="main">
+
+<!-- ============================================================ PAGE 1: PROFILE ============================================================ -->
+<div id="page-profile" class="page active">
+<div class="hero ani">
+  <div class="hero-icon">🌿</div>
+  <h1>Your Personal<br><em>Health Maintenance</em> Schedule</h1>
+  <p>Like a car's service manual — but for your body. Enter your profile to get a personalized, evidence-based screening schedule built from North American medical society guidelines.</p>
+  <div class="hero-pills">
+    <span class="hero-pill">🔬 Cancer Screening</span>
+    <span class="hero-pill">❤️ Cardiovascular</span>
+    <span class="hero-pill">🧠 Mental Health</span>
+    <span class="hero-pill">💪 Fitness &amp; Metabolic</span>
+    <span class="hero-pill">👁 Vision &amp; Hearing</span>
+    <span class="hero-pill">💉 Immunizations</span>
+    <span class="hero-pill">🦠 Infectious Disease</span>
+    <span class="hero-pill">🦴 Bone Health</span>
+  </div>
+</div>
+
+<div class="wizard ani">
+  <div class="wstep active"><div class="wstep-num">1</div><div class="wstep-label">Profile</div></div>
+  <div class="wdiv"></div>
+  <div class="wstep"><div class="wstep-num">2</div><div class="wstep-label">Risk Factors</div></div>
+  <div class="wdiv"></div>
+  <div class="wstep"><div class="wstep-num">3</div><div class="wstep-label">Review of Systems</div></div>
+  <div class="wdiv"></div>
+  <div class="wstep"><div class="wstep-num">4</div><div class="wstep-label">Your Schedule</div></div>
+</div>
+
+<div class="card ani">
+  <div class="card-title">🧍 Basic Profile</div>
+  <div class="card-sub">Used to determine age-appropriate and sex-specific screening intervals</div>
+  <div class="fgrid" style="margin-bottom:16px">
+    <div class="field">
+      <label>Date of Birth</label>
+      <input type="date" id="dob" onchange="updateAge()">
+    </div>
+    <div class="field">
+      <label>Biological Sex</label>
+      <select id="sex">
+        <option value="">Select…</option>
+        <option value="M">Male</option>
+        <option value="F">Female</option>
+        <option value="X">Non-binary / Other</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label>Ethnicity / Ancestry <span style="font-weight:300;font-size:11px;text-transform:none">(affects certain screening thresholds)</span></label>
+    <div class="chips" id="eth-chips">
+      <div class="chip" onclick="toggleChip(this,'eth')"><span class="dot"></span>White / European</div>
+      <div class="chip" onclick="toggleChip(this,'eth')"><span class="dot"></span>Black / African</div>
+      <div class="chip" onclick="toggleChip(this,'eth')"><span class="dot"></span>South Asian</div>
+      <div class="chip" onclick="toggleChip(this,'eth')"><span class="dot"></span>East / SE Asian</div>
+      <div class="chip" onclick="toggleChip(this,'eth')"><span class="dot"></span>Indigenous / First Nations</div>
+      <div class="chip" onclick="toggleChip(this,'eth')"><span class="dot"></span>Latino / Hispanic</div>
+      <div class="chip" onclick="toggleChip(this,'eth')"><span class="dot"></span>Middle Eastern</div>
+      <div class="chip" onclick="toggleChip(this,'eth')"><span class="dot"></span>Prefer not to say</div>
+    </div>
+  </div>
+</div>
+
+<div class="card ani">
+  <div class="card-title">📏 Measurements</div>
+  <div class="card-sub">Used to calculate BMI and cardiovascular risk</div>
+  <div class="fgrid3">
+    <div class="field"><label>Height (cm)</label><input type="number" id="ht" placeholder="170" min="100" max="250" oninput="calcBMI()"></div>
+    <div class="field"><label>Weight (kg)</label><input type="number" id="wt" placeholder="70" min="30" max="300" oninput="calcBMI()"></div>
+    <div class="field"><label>BMI</label><input type="text" id="bmi-disp" readonly placeholder="—" style="background:#f5f0eb;font-family:'DM Mono',monospace;color:var(--text-muted)"></div>
+  </div>
+</div>
+
+<div class="card ani">
+  <div class="card-title">🌿 Lifestyle</div>
+  <div class="card-sub">Current habits that modify screening recommendations</div>
+
+  <div style="margin-bottom:16px">
+    <div class="field"><label>Smoking Status</label>
+      <div class="chips">
+        <div class="chip" onclick="single(this,'smoke','never')"><span class="dot"></span>Never smoked</div>
+        <div class="chip" onclick="single(this,'smoke','former')"><span class="dot"></span>Former smoker</div>
+        <div class="chip" onclick="single(this,'smoke','current')"><span class="dot"></span>Current smoker</div>
+      </div>
+    </div>
+  </div>
+  <div id="smoke-detail" style="display:none" class="fgrid" style="margin-bottom:16px">
+    <div class="field"><label>Pack-years smoked</label><input type="number" id="packyrs" placeholder="e.g. 20" min="0"></div>
+    <div class="field"><label>Years since quitting (if former)</label><input type="number" id="quityr" placeholder="e.g. 5" min="0"></div>
+  </div>
+
+  <div style="margin-bottom:16px">
+    <div class="field"><label>Alcohol Use</label>
+      <div class="chips">
+        <div class="chip" onclick="single(this,'alc','none')"><span class="dot"></span>None / very rarely</div>
+        <div class="chip" onclick="single(this,'alc','low')"><span class="dot"></span>Low (&lt;2 drinks/day)</div>
+        <div class="chip" onclick="single(this,'alc','moderate')"><span class="dot"></span>Moderate (2–4/day)</div>
+        <div class="chip" onclick="single(this,'alc','heavy')"><span class="dot"></span>Heavy (&gt;4/day)</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:16px">
+    <div class="field"><label>Physical Activity</label>
+      <div class="chips">
+        <div class="chip" onclick="single(this,'act','sedentary')"><span class="dot"></span>Sedentary (little/no exercise)</div>
+        <div class="chip" onclick="single(this,'act','light')"><span class="dot"></span>Light (&lt;90 min/week)</div>
+        <div class="chip" onclick="single(this,'act','moderate')"><span class="dot"></span>Moderate (90–150 min/week)</div>
+        <div class="chip" onclick="single(this,'act','active')"><span class="dot"></span>Active (&gt;150 min/week)</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="field"><label>Sexual Activity</label>
+      <div class="chips">
+        <div class="chip" onclick="single(this,'sex_act','none')"><span class="dot"></span>Not sexually active</div>
+        <div class="chip" onclick="single(this,'sex_act','mono')"><span class="dot"></span>Active — monogamous</div>
+        <div class="chip" onclick="single(this,'sex_act','multi')"><span class="dot"></span>Active — multiple partners</div>
+        <div class="chip" onclick="single(this,'sex_act','msm')"><span class="dot"></span>MSM (men who have sex with men)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="btn-row ani">
+  <button class="btn btn-primary" onclick="goRisk()">Continue to Risk Factors →</button>
+</div>
+</div><!-- end page-profile -->
+
+
+<!-- ============================================================ PAGE 2: RISK FACTORS ============================================================ -->
+<div id="page-risk" class="page">
+
+<div class="wizard ani">
+  <div class="wstep done"><div class="wstep-num">✓</div><div class="wstep-label">Profile</div></div>
+  <div class="wdiv"></div>
+  <div class="wstep active"><div class="wstep-num">2</div><div class="wstep-label">Risk Factors</div></div>
+  <div class="wdiv"></div>
+  <div class="wstep"><div class="wstep-num">3</div><div class="wstep-label">Review of Systems</div></div>
+  <div class="wdiv"></div>
+  <div class="wstep"><div class="wstep-num">4</div><div class="wstep-label">Your Schedule</div></div>
+</div>
+
+<div class="card ani">
+  <div class="card-title">🧬 Family History</div>
+  <div class="card-sub">First-degree relatives (parents, siblings, children) diagnosed with these conditions</div>
+  <div class="chips" id="fhx-chips">
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>Breast cancer</div>
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>Ovarian cancer</div>
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>Colorectal cancer</div>
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>Prostate cancer</div>
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>Lung cancer</div>
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>Melanoma / skin cancer</div>
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>Pancreatic cancer</div>
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>Heart disease (early — &lt;55M / &lt;65F)</div>
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>Type 2 diabetes</div>
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>Osteoporosis / fractures</div>
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>BRCA1 / BRCA2 gene</div>
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>Lynch syndrome (HNPCC)</div>
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>Alzheimer's / dementia</div>
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>Glaucoma</div>
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>Abdominal aortic aneurysm</div>
+    <div class="chip" onclick="toggleChip(this,'fhx')"><span class="dot"></span>Sudden cardiac death (&lt;50)</div>
+  </div>
+</div>
+
+<div class="card ani">
+  <div class="card-title">🏥 Personal Medical History</div>
+  <div class="card-sub">Conditions you have been diagnosed with or are currently managed for</div>
+  <div class="chips" id="phx-chips">
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Hypertension</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Diabetes / prediabetes</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>High cholesterol</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Heart disease / CAD</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Prior stroke / TIA</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Atrial fibrillation</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>COPD / emphysema</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Asthma</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Depression / anxiety</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Bipolar disorder</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Schizophrenia / psychosis</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Osteoporosis</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>IBD (Crohn's / UC)</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Celiac disease</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Thyroid disease</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Autoimmune condition</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>HIV / immunocompromised</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Hepatitis B or C</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Obstructive sleep apnea</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>PCOS</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Prior cancer (any)</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Kidney disease (CKD)</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Long-term steroid use</div>
+    <div class="chip" onclick="toggleChip(this,'phx')"><span class="dot"></span>Obesity</div>
+  </div>
+</div>
+
+<div class="card ani" id="repro-card" style="display:none">
+  <div class="card-title">🌸 Reproductive History</div>
+  <div class="card-sub">Relevant for cervical, breast, and bone health screening</div>
+  <div class="chips" id="rhx-chips">
+    <div class="chip" onclick="toggleChip(this,'rhx')"><span class="dot"></span>Currently pregnant</div>
+    <div class="chip" onclick="toggleChip(this,'rhx')"><span class="dot"></span>Postmenopausal</div>
+    <div class="chip" onclick="toggleChip(this,'rhx')"><span class="dot"></span>Hormone therapy (HRT)</div>
+    <div class="chip" onclick="toggleChip(this,'rhx')"><span class="dot"></span>Never had a Pap smear</div>
+    <div class="chip" onclick="toggleChip(this,'rhx')"><span class="dot"></span>Prior abnormal Pap / CIN</div>
+    <div class="chip" onclick="toggleChip(this,'rhx')"><span class="dot"></span>Never had a mammogram</div>
+    <div class="chip" onclick="toggleChip(this,'rhx')"><span class="dot"></span>Gestational diabetes (past)</div>
+    <div class="chip" onclick="toggleChip(this,'rhx')"><span class="dot"></span>Preeclampsia (past)</div>
+    <div class="chip" onclick="toggleChip(this,'rhx')"><span class="dot"></span>Planning pregnancy</div>
+  </div>
+</div>
+
+<div class="card ani">
+  <div class="card-title">🏭 Occupational &amp; Environmental</div>
+  <div class="card-sub">Exposures that affect screening needs</div>
+  <div class="chips" id="env-chips">
+    <div class="chip" onclick="toggleChip(this,'env')"><span class="dot"></span>Healthcare worker</div>
+    <div class="chip" onclick="toggleChip(this,'env')"><span class="dot"></span>Asbestos / industrial exposure</div>
+    <div class="chip" onclick="toggleChip(this,'env')"><span class="dot"></span>High noise exposure</div>
+    <div class="chip" onclick="toggleChip(this,'env')"><span class="dot"></span>High UV / outdoor sun</div>
+    <div class="chip" onclick="toggleChip(this,'env')"><span class="dot"></span>Born or lived outside Canada</div>
+    <div class="chip" onclick="toggleChip(this,'env')"><span class="dot"></span>Radon exposure (basement/rural)</div>
+    <div class="chip" onclick="toggleChip(this,'env')"><span class="dot"></span>Correctional / shelter setting</div>
+    <div class="chip" onclick="toggleChip(this,'env')"><span class="dot"></span>Military / combat veteran</div>
+  </div>
+</div>
+
+<div class="btn-row ani">
+  <button class="btn btn-secondary" onclick="show('profile')">← Back</button>
+  <button class="btn btn-primary" onclick="goRos()">Continue to Review of Systems →</button>
+</div>
+</div><!-- end page-risk -->
+
+
+
+
+<!-- ============================================================ PAGE 3: REVIEW OF SYSTEMS ============================================================ -->
+<div id="page-ros" class="page">
+
+<div class="wizard ani">
+  <div class="wstep done"><div class="wstep-num">✓</div><div class="wstep-label">Profile</div></div>
+  <div class="wdiv"></div>
+  <div class="wstep done"><div class="wstep-num">✓</div><div class="wstep-label">Risk Factors</div></div>
+  <div class="wdiv"></div>
+  <div class="wstep active"><div class="wstep-num">3</div><div class="wstep-label">Review of Systems</div></div>
+  <div class="wdiv"></div>
+  <div class="wstep"><div class="wstep-num">4</div><div class="wstep-label">Your Schedule</div></div>
+</div>
+
+<div class="card ani">
+  <div class="card-title">🩺 Review of Systems — How Are You Feeling?</div>
+  <div class="card-sub">Your physician asks these questions at a periodic health exam. Answer honestly — your responses will appear in the summary you can share with your doctor. Select all symptoms you have noticed <em>in the past few months</em>.</div>
+</div>
+
+<!-- CONSTITUTIONAL -->
+<div class="card ani">
+  <div class="card-title" style="font-size:16px">🌡️ General / Constitutional</div>
+  <div class="card-sub">Overall wellbeing and systemic symptoms</div>
+  <div class="chips" id="ros-const">
+    <div class="chip" onclick="toggleRos(this,'const','Unexplained weight loss (>5 kg)')"><span class="dot"></span>Unexplained weight loss</div>
+    <div class="chip" onclick="toggleRos(this,'const','Unexplained weight gain')"><span class="dot"></span>Unexplained weight gain</div>
+    <div class="chip" onclick="toggleRos(this,'const','Persistent fatigue or low energy')"><span class="dot"></span>Persistent fatigue / low energy</div>
+    <div class="chip" onclick="toggleRos(this,'const','Fever or night sweats')"><span class="dot"></span>Fever or night sweats</div>
+    <div class="chip" onclick="toggleRos(this,'const','Feeling generally unwell')"><span class="dot"></span>Feeling generally unwell</div>
+    <div class="chip" onclick="toggleRos(this,'const','Excessive thirst or urination')"><span class="dot"></span>Excessive thirst or urination</div>
+    <div class="chip" onclick="toggleRos(this,'const','Feeling cold all the time')"><span class="dot"></span>Feeling cold all the time</div>
+    <div class="chip" onclick="toggleRos(this,'const','Unexplained lumps or swollen glands')"><span class="dot"></span>Unexplained lumps / swollen glands</div>
+  </div>
+</div>
+
+<!-- CARDIOVASCULAR -->
+<div class="card ani">
+  <div class="card-title" style="font-size:16px">❤️ Heart &amp; Circulation</div>
+  <div class="card-sub">Symptoms relating to the heart, blood pressure, and circulation</div>
+  <div class="chips" id="ros-cv">
+    <div class="chip" onclick="toggleRos(this,'cv','Chest pain or pressure (especially with exertion)')"><span class="dot"></span>Chest pain or pressure</div>
+    <div class="chip" onclick="toggleRos(this,'cv','Palpitations or rapid heartbeat')"><span class="dot"></span>Palpitations / racing heart</div>
+    <div class="chip" onclick="toggleRos(this,'cv','Shortness of breath with activity')"><span class="dot"></span>Shortness of breath with activity</div>
+    <div class="chip" onclick="toggleRos(this,'cv','Shortness of breath lying flat')"><span class="dot"></span>Breathless lying flat</div>
+    <div class="chip" onclick="toggleRos(this,'cv','Leg swelling (ankles/feet)')"><span class="dot"></span>Leg / ankle swelling</div>
+    <div class="chip" onclick="toggleRos(this,'cv','Leg pain with walking (claudication)')"><span class="dot"></span>Leg pain when walking</div>
+    <div class="chip" onclick="toggleRos(this,'cv','Dizziness or near-fainting')"><span class="dot"></span>Dizziness / near-fainting</div>
+    <div class="chip" onclick="toggleRos(this,'cv','Waking at night to urinate more than usual')"><span class="dot"></span>Waking to urinate at night</div>
+  </div>
+</div>
+
+<!-- RESPIRATORY -->
+<div class="card ani">
+  <div class="card-title" style="font-size:16px">🫁 Lungs &amp; Breathing</div>
+  <div class="card-sub">Respiratory symptoms</div>
+  <div class="chips" id="ros-resp">
+    <div class="chip" onclick="toggleRos(this,'resp','Persistent cough (>3 weeks)')"><span class="dot"></span>Persistent cough (&gt;3 weeks)</div>
+    <div class="chip" onclick="toggleRos(this,'resp','Coughing up blood')"><span class="dot"></span>Coughing up blood</div>
+    <div class="chip" onclick="toggleRos(this,'resp','Wheezing')"><span class="dot"></span>Wheezing</div>
+    <div class="chip" onclick="toggleRos(this,'resp','Shortness of breath at rest')"><span class="dot"></span>Breathless at rest</div>
+    <div class="chip" onclick="toggleRos(this,'resp','Frequent chest infections')"><span class="dot"></span>Frequent chest infections</div>
+    <div class="chip" onclick="toggleRos(this,'resp','Snoring / witnessed pauses in breathing during sleep')"><span class="dot"></span>Snoring / sleep apnea symptoms</div>
+    <div class="chip" onclick="toggleRos(this,'resp','Daytime sleepiness despite adequate sleep')"><span class="dot"></span>Daytime sleepiness</div>
+  </div>
+</div>
+
+<!-- GI -->
+<div class="card ani">
+  <div class="card-title" style="font-size:16px">🫃 Digestive System</div>
+  <div class="card-sub">Gastrointestinal symptoms</div>
+  <div class="chips" id="ros-gi">
+    <div class="chip" onclick="toggleRos(this,'gi','Heartburn or acid reflux')"><span class="dot"></span>Heartburn / acid reflux</div>
+    <div class="chip" onclick="toggleRos(this,'gi','Difficulty swallowing')"><span class="dot"></span>Difficulty swallowing</div>
+    <div class="chip" onclick="toggleRos(this,'gi','Nausea or vomiting')"><span class="dot"></span>Nausea / vomiting</div>
+    <div class="chip" onclick="toggleRos(this,'gi','Abdominal pain or cramping')"><span class="dot"></span>Abdominal pain</div>
+    <div class="chip" onclick="toggleRos(this,'gi','Bloating or excessive gas')"><span class="dot"></span>Bloating / gas</div>
+    <div class="chip" onclick="toggleRos(this,'gi','Change in bowel habits (constipation or diarrhea)')"><span class="dot"></span>Change in bowel habits</div>
+    <div class="chip" onclick="toggleRos(this,'gi','Blood in stool or black tarry stools')"><span class="dot"></span>Blood in stool / black stools</div>
+    <div class="chip" onclick="toggleRos(this,'gi','Rectal bleeding')"><span class="dot"></span>Rectal bleeding</div>
+    <div class="chip" onclick="toggleRos(this,'gi','Unexplained loss of appetite')"><span class="dot"></span>Loss of appetite</div>
+    <div class="chip" onclick="toggleRos(this,'gi','Jaundice (yellowing of skin or eyes)')"><span class="dot"></span>Jaundice</div>
+  </div>
+</div>
+
+<!-- GU -->
+<div class="card ani">
+  <div class="card-title" style="font-size:16px">🫘 Urinary System</div>
+  <div class="card-sub">Urinary and kidney-related symptoms</div>
+  <div class="chips" id="ros-gu">
+    <div class="chip" onclick="toggleRos(this,'gu','Frequent urination')"><span class="dot"></span>Frequent urination</div>
+    <div class="chip" onclick="toggleRos(this,'gu','Burning or pain with urination')"><span class="dot"></span>Burning / pain with urination</div>
+    <div class="chip" onclick="toggleRos(this,'gu','Blood in urine')"><span class="dot"></span>Blood in urine</div>
+    <div class="chip" onclick="toggleRos(this,'gu','Urinary incontinence or leakage')"><span class="dot"></span>Urinary leakage / incontinence</div>
+    <div class="chip" onclick="toggleRos(this,'gu','Difficulty starting urination or weak stream')"><span class="dot"></span>Weak stream / difficulty starting</div>
+    <div class="chip" onclick="toggleRos(this,'gu','Feeling of incomplete bladder emptying')"><span class="dot"></span>Incomplete emptying</div>
+    <div class="chip" onclick="toggleRos(this,'gu','Kidney or flank pain')"><span class="dot"></span>Flank / kidney pain</div>
+  </div>
+</div>
+
+<!-- NEURO -->
+<div class="card ani">
+  <div class="card-title" style="font-size:16px">🧠 Neurological</div>
+  <div class="card-sub">Brain, nerve, and movement symptoms</div>
+  <div class="chips" id="ros-neuro">
+    <div class="chip" onclick="toggleRos(this,'neuro','Frequent headaches')"><span class="dot"></span>Frequent headaches</div>
+    <div class="chip" onclick="toggleRos(this,'neuro','Sudden severe ("thunderclap") headache')"><span class="dot"></span>Sudden severe headache</div>
+    <div class="chip" onclick="toggleRos(this,'neuro','Dizziness or vertigo')"><span class="dot"></span>Dizziness / vertigo</div>
+    <div class="chip" onclick="toggleRos(this,'neuro','Numbness or tingling in hands or feet')"><span class="dot"></span>Numbness / tingling</div>
+    <div class="chip" onclick="toggleRos(this,'neuro','Weakness in arms or legs')"><span class="dot"></span>Weakness in limbs</div>
+    <div class="chip" onclick="toggleRos(this,'neuro','Tremor or shaking')"><span class="dot"></span>Tremor / shaking</div>
+    <div class="chip" onclick="toggleRos(this,'neuro','Memory problems or difficulty concentrating')"><span class="dot"></span>Memory / concentration problems</div>
+    <div class="chip" onclick="toggleRos(this,'neuro','Seizures or blackouts')"><span class="dot"></span>Seizures / blackouts</div>
+    <div class="chip" onclick="toggleRos(this,'neuro','Changes in speech or word-finding difficulty')"><span class="dot"></span>Speech / word-finding difficulty</div>
+    <div class="chip" onclick="toggleRos(this,'neuro','Balance or coordination problems')"><span class="dot"></span>Balance / coordination problems</div>
+  </div>
+</div>
+
+<!-- MSK -->
+<div class="card ani">
+  <div class="card-title" style="font-size:16px">🦴 Muscles, Joints &amp; Bones</div>
+  <div class="card-sub">Musculoskeletal symptoms</div>
+  <div class="chips" id="ros-msk">
+    <div class="chip" onclick="toggleRos(this,'msk','Joint pain or swelling')"><span class="dot"></span>Joint pain or swelling</div>
+    <div class="chip" onclick="toggleRos(this,'msk','Morning stiffness lasting >1 hour')"><span class="dot"></span>Morning stiffness &gt;1 hour</div>
+    <div class="chip" onclick="toggleRos(this,'msk','Back pain')"><span class="dot"></span>Back pain</div>
+    <div class="chip" onclick="toggleRos(this,'msk','Neck pain')"><span class="dot"></span>Neck pain</div>
+    <div class="chip" onclick="toggleRos(this,'msk','Muscle weakness or cramps')"><span class="dot"></span>Muscle weakness / cramps</div>
+    <div class="chip" onclick="toggleRos(this,'msk','Difficulty with stairs, rising from chair, or overhead activities')"><span class="dot"></span>Difficulty with stairs / rising</div>
+    <div class="chip" onclick="toggleRos(this,'msk','Recent fracture or bone fragility')"><span class="dot"></span>Recent fracture / bone fragility</div>
+    <div class="chip" onclick="toggleRos(this,'msk','Widespread muscle pain or tenderness')"><span class="dot"></span>Widespread muscle pain</div>
+  </div>
+</div>
+
+<!-- MENTAL HEALTH -->
+<div class="card ani">
+  <div class="card-title" style="font-size:16px">💭 Mental Health &amp; Mood</div>
+  <div class="card-sub">Emotional wellbeing — questions your doctor would typically ask</div>
+  <div class="chips" id="ros-mh">
+    <div class="chip" onclick="toggleRos(this,'mh','Feeling sad, empty, or hopeless most of the time')"><span class="dot"></span>Feeling sad / hopeless</div>
+    <div class="chip" onclick="toggleRos(this,'mh','Loss of interest or pleasure in activities you used to enjoy')"><span class="dot"></span>Loss of interest in things</div>
+    <div class="chip" onclick="toggleRos(this,'mh','Excessive worry or feeling anxious most days')"><span class="dot"></span>Excessive worry / anxiety</div>
+    <div class="chip" onclick="toggleRos(this,'mh','Panic attacks')"><span class="dot"></span>Panic attacks</div>
+    <div class="chip" onclick="toggleRos(this,'mh','Difficulty sleeping — trouble falling or staying asleep')"><span class="dot"></span>Sleep problems</div>
+    <div class="chip" onclick="toggleRos(this,'mh','Sleeping too much')"><span class="dot"></span>Sleeping too much</div>
+    <div class="chip" onclick="toggleRos(this,'mh','Significant changes in appetite')"><span class="dot"></span>Changes in appetite</div>
+    <div class="chip" onclick="toggleRos(this,'mh','Irritability or anger out of proportion to situation')"><span class="dot"></span>Irritability / anger</div>
+    <div class="chip" onclick="toggleRos(this,'mh','Feeling burned out or emotionally exhausted')"><span class="dot"></span>Burnout / emotional exhaustion</div>
+    <div class="chip ros-sensitive" onclick="toggleRos(this,'mh','Thoughts of self-harm or suicide')"><span class="dot"></span>Thoughts of self-harm or suicide</div>
+    <div class="chip" onclick="toggleRos(this,'mh','Using alcohol or substances more than intended to cope')"><span class="dot"></span>Using substances to cope</div>
+  </div>
+  <p style="font-size:11px;color:var(--text-muted);margin-top:10px;line-height:1.6">If you are experiencing thoughts of self-harm, please contact the <strong>BC Crisis Line: 1-800-784-2433</strong> or text HOME to 741741. You are not alone.</p>
+</div>
+
+<!-- SKIN -->
+<div class="card ani">
+  <div class="card-title" style="font-size:16px">🧴 Skin &amp; Hair</div>
+  <div class="card-sub">Dermatological symptoms</div>
+  <div class="chips" id="ros-skin">
+    <div class="chip" onclick="toggleRos(this,'skin','New or changing mole or skin lesion')"><span class="dot"></span>New or changing mole</div>
+    <div class="chip" onclick="toggleRos(this,'skin','Rash or persistent skin condition')"><span class="dot"></span>Rash / persistent skin condition</div>
+    <div class="chip" onclick="toggleRos(this,'skin','Unusual bruising or bleeding')"><span class="dot"></span>Unusual bruising / bleeding</div>
+    <div class="chip" onclick="toggleRos(this,'skin','Hair loss (beyond normal shedding)')"><span class="dot"></span>Hair loss</div>
+    <div class="chip" onclick="toggleRos(this,'skin','Very dry or itchy skin')"><span class="dot"></span>Very dry or itchy skin</div>
+    <div class="chip" onclick="toggleRos(this,'skin','Slow-healing wounds or sores')"><span class="dot"></span>Slow-healing wounds</div>
+  </div>
+</div>
+
+<!-- HEENT -->
+<div class="card ani">
+  <div class="card-title" style="font-size:16px">👁 Eyes, Ears, Nose &amp; Throat</div>
+  <div class="card-sub">Head and sensory organ symptoms</div>
+  <div class="chips" id="ros-heent">
+    <div class="chip" onclick="toggleRos(this,'heent','Blurred or decreased vision')"><span class="dot"></span>Blurred / decreased vision</div>
+    <div class="chip" onclick="toggleRos(this,'heent','Double vision')"><span class="dot"></span>Double vision</div>
+    <div class="chip" onclick="toggleRos(this,'heent','Eye pain or redness')"><span class="dot"></span>Eye pain or redness</div>
+    <div class="chip" onclick="toggleRos(this,'heent','Halos around lights or glare (glaucoma/cataract symptom)')"><span class="dot"></span>Halos around lights / glare</div>
+    <div class="chip" onclick="toggleRos(this,'heent','Hearing loss or difficulty hearing in conversations')"><span class="dot"></span>Hearing loss</div>
+    <div class="chip" onclick="toggleRos(this,'heent','Ringing in the ears (tinnitus)')"><span class="dot"></span>Ringing in ears (tinnitus)</div>
+    <div class="chip" onclick="toggleRos(this,'heent','Frequent nosebleeds')"><span class="dot"></span>Frequent nosebleeds</div>
+    <div class="chip" onclick="toggleRos(this,'heent','Chronic nasal congestion or sinus problems')"><span class="dot"></span>Chronic sinus congestion</div>
+    <div class="chip" onclick="toggleRos(this,'heent','Hoarse voice lasting >3 weeks')"><span class="dot"></span>Hoarse voice (&gt;3 weeks)</div>
+    <div class="chip" onclick="toggleRos(this,'heent','Mouth sores or difficulty chewing')"><span class="dot"></span>Mouth sores</div>
+    <div class="chip" onclick="toggleRos(this,'heent','Dental pain or swollen gums')"><span class="dot"></span>Dental pain / swollen gums</div>
+  </div>
+</div>
+
+<!-- ENDOCRINE -->
+<div class="card ani">
+  <div class="card-title" style="font-size:16px">🦋 Hormones &amp; Metabolism</div>
+  <div class="card-sub">Endocrine and metabolic symptoms</div>
+  <div class="chips" id="ros-endo">
+    <div class="chip" onclick="toggleRos(this,'endo','Heat intolerance or feeling very warm')"><span class="dot"></span>Heat intolerance / feeling warm</div>
+    <div class="chip" onclick="toggleRos(this,'endo','Cold intolerance or always feeling cold')"><span class="dot"></span>Cold intolerance</div>
+    <div class="chip" onclick="toggleRos(this,'endo','Increased hunger despite eating normally')"><span class="dot"></span>Increased hunger</div>
+    <div class="chip" onclick="toggleRos(this,'endo','Excessive sweating')"><span class="dot"></span>Excessive sweating</div>
+    <div class="chip" onclick="toggleRos(this,'endo','Neck swelling or visible goitre')"><span class="dot"></span>Neck swelling / goitre</div>
+    <div class="chip" onclick="toggleRos(this,'endo','Slow or rapid heartbeat at rest')"><span class="dot"></span>Resting heart rate changes</div>
+    <div class="chip" onclick="toggleRos(this,'endo','Stretch marks (new or worsening)')"><span class="dot"></span>New stretch marks</div>
+    <div class="chip" onclick="toggleRos(this,'endo','Facial hair in women or breast tissue in men')"><span class="dot"></span>Hormonal appearance changes</div>
+  </div>
+</div>
+
+<!-- SEX SPECIFIC — shown/hidden by JS -->
+<div class="card ani" id="ros-female-card">
+  <div class="card-title" style="font-size:16px">🌸 Reproductive &amp; Pelvic (Female)</div>
+  <div class="card-sub">Gynaecological symptoms — relevant at periodic health exams</div>
+  <div class="chips" id="ros-female">
+    <div class="chip" onclick="toggleRos(this,'female','Irregular or missed periods')"><span class="dot"></span>Irregular or missed periods</div>
+    <div class="chip" onclick="toggleRos(this,'female','Unusually heavy or prolonged menstrual bleeding')"><span class="dot"></span>Heavy / prolonged periods</div>
+    <div class="chip" onclick="toggleRos(this,'female','Painful periods (dysmenorrhea)')"><span class="dot"></span>Painful periods</div>
+    <div class="chip" onclick="toggleRos(this,'female','Bleeding between periods or after intercourse')"><span class="dot"></span>Bleeding between periods</div>
+    <div class="chip" onclick="toggleRos(this,'female','Postmenopausal vaginal bleeding')"><span class="dot"></span>Postmenopausal bleeding</div>
+    <div class="chip" onclick="toggleRos(this,'female','Vaginal discharge (abnormal colour, odour, or amount)')"><span class="dot"></span>Abnormal vaginal discharge</div>
+    <div class="chip" onclick="toggleRos(this,'female','Pelvic pain or pressure')"><span class="dot"></span>Pelvic pain / pressure</div>
+    <div class="chip" onclick="toggleRos(this,'female','Pain during intercourse')"><span class="dot"></span>Pain during intercourse</div>
+    <div class="chip" onclick="toggleRos(this,'female','Vaginal dryness or irritation')"><span class="dot"></span>Vaginal dryness / irritation</div>
+    <div class="chip" onclick="toggleRos(this,'female','New or changing breast lump')"><span class="dot"></span>Breast lump (new or changing)</div>
+    <div class="chip" onclick="toggleRos(this,'female','Nipple discharge')"><span class="dot"></span>Nipple discharge</div>
+    <div class="chip" onclick="toggleRos(this,'female','Hot flashes or night sweats (menopause symptoms)')"><span class="dot"></span>Hot flashes / menopausal symptoms</div>
+  </div>
+</div>
+
+<div class="card ani" id="ros-male-card">
+  <div class="card-title" style="font-size:16px">🔵 Reproductive &amp; Pelvic (Male)</div>
+  <div class="card-sub">Symptoms relevant at periodic health exams for men</div>
+  <div class="chips" id="ros-male">
+    <div class="chip" onclick="toggleRos(this,'male','Erectile dysfunction')"><span class="dot"></span>Erectile dysfunction</div>
+    <div class="chip" onclick="toggleRos(this,'male','Decreased libido')"><span class="dot"></span>Decreased libido</div>
+    <div class="chip" onclick="toggleRos(this,'male','Testicular lump or pain')"><span class="dot"></span>Testicular lump or pain</div>
+    <div class="chip" onclick="toggleRos(this,'male','Penile discharge or sores')"><span class="dot"></span>Penile discharge or sores</div>
+    <div class="chip" onclick="toggleRos(this,'male','Difficulty starting urination, weak stream, or dribbling (prostate symptoms)')"><span class="dot"></span>Prostate-type urinary symptoms</div>
+    <div class="chip" onclick="toggleRos(this,'male','Breast enlargement (gynecomastia)')"><span class="dot"></span>Breast enlargement</div>
+    <div class="chip" onclick="toggleRos(this,'male','Infertility or difficulty conceiving')"><span class="dot"></span>Infertility concerns</div>
+  </div>
+</div>
+
+<!-- AGE 65+ SPECIFIC -->
+<div class="card ani" id="ros-geri-card">
+  <div class="card-title" style="font-size:16px">👴 Older Adult — Additional Questions</div>
+  <div class="card-sub">Questions particularly relevant for adults 65 and older</div>
+  <div class="chips" id="ros-geri">
+    <div class="chip" onclick="toggleRos(this,'geri','Recent falls (one or more in the past year)')"><span class="dot"></span>Recent falls</div>
+    <div class="chip" onclick="toggleRos(this,'geri','Fear of falling limiting activities')"><span class="dot"></span>Fear of falling</div>
+    <div class="chip" onclick="toggleRos(this,'geri','Difficulty with daily activities (dressing, bathing, cooking, finances)')"><span class="dot"></span>Difficulty with daily activities</div>
+    <div class="chip" onclick="toggleRos(this,'geri','Noticeable decline in memory compared to a year ago')"><span class="dot"></span>Memory decline (vs 1 yr ago)</div>
+    <div class="chip" onclick="toggleRos(this,'geri','Getting lost in familiar places')"><span class="dot"></span>Getting lost in familiar places</div>
+    <div class="chip" onclick="toggleRos(this,'geri','Concerns about driving safety')"><span class="dot"></span>Driving safety concerns</div>
+    <div class="chip" onclick="toggleRos(this,'geri','Social isolation or loneliness')"><span class="dot"></span>Social isolation / loneliness</div>
+    <div class="chip" onclick="toggleRos(this,'geri','Concerns about home safety or ability to live independently')"><span class="dot"></span>Home safety / independence concerns</div>
+    <div class="chip" onclick="toggleRos(this,'geri','Unexplained weight loss (>5% in 6 months)')"><span class="dot"></span>Unexplained weight loss</div>
+    <div class="chip" onclick="toggleRos(this,'geri','Increased sensitivity to medications or new side effects')"><span class="dot"></span>Medication sensitivity / side effects</div>
+  </div>
+</div>
+
+<!-- FREE TEXT -->
+<div class="card ani">
+  <div class="card-title" style="font-size:16px">📝 Anything Else?</div>
+  <div class="card-sub">Any other symptoms, concerns, or questions you want your doctor to know about</div>
+  <textarea id="ros-other" rows="4" placeholder="e.g. I've been having headaches after work most days… I'm worried about a mole on my back… I've noticed my memory isn't as sharp as it used to be…" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);background:var(--cream);outline:none;resize:vertical;line-height:1.6"></textarea>
+</div>
+
+<div class="btn-row ani">
+  <button class="btn btn-secondary" onclick="show('risk')">← Back</button>
+  <button class="btn btn-primary" onclick="generate()">Generate My Full Schedule →</button>
+</div>
+
+</div><!-- end page-ros -->
+
+
+<!-- ============================================================ PAGE 4: RESULTS ============================================================ -->
+<div id="page-results" class="page">
+  <div id="res"></div>
+</div>
+
+</div><!-- /.main -->
+
+
+<script>
+// =========================================================
+// REVIEW OF SYSTEMS STATE & FUNCTIONS
+// =========================================================
+var ROS = {
+  const: [], cv: [], resp: [], gi: [], gu: [],
+  neuro: [], msk: [], mh: [], skin: [], heent: [],
+  endo: [], female: [], male: [], geri: [],
+  other: ''
+};
+
+var ROS_LABELS = {
+  const: '🌡️ General',
+  cv: '❤️ Heart & Circulation',
+  resp: '🫁 Lungs & Breathing',
+  gi: '🫃 Digestive',
+  gu: '🫘 Urinary',
+  neuro: '🧠 Neurological',
+  msk: '🦴 Muscles & Joints',
+  mh: '💭 Mental Health',
+  skin: '🧴 Skin & Hair',
+  heent: '👁 Eyes, Ears, Nose & Throat',
+  endo: '🦋 Hormones & Metabolism',
+  female: '🌸 Reproductive (Female)',
+  male: '🔵 Reproductive (Male)',
+  geri: '👴 Older Adult'
+};
+
+// Symptoms that warrant a note to discuss urgently
+var ROS_URGENT = [
+  'Chest pain or pressure',
+  'Coughing up blood',
+  'Blood in stool',
+  'Rectal bleeding',
+  'Blood in urine',
+  'Sudden severe ("thunderclap") headache',
+  'Thoughts of self-harm or suicide',
+  'Postmenopausal vaginal bleeding',
+  'Seizures or blackouts',
+  'Unexplained weight loss'
+];
+
+function toggleRos(el, system, symptom) {
+  el.classList.toggle('on');
+  var arr = ROS[system];
+  var idx = arr.indexOf(symptom);
+  if (el.classList.contains('on')) {
+    if (idx === -1) arr.push(symptom);
+  } else {
+    if (idx > -1) arr.splice(idx, 1);
+  }
+}
+
+function goRos() {
+  // collect state from risk page
+  S.sex = document.getElementById('sex').value;
+  updateAge();
+  S.packYrs = parseFloat(document.getElementById('packyrs').value)||0;
+  S.quitYrs = parseFloat(document.getElementById('quityr').value)||0;
+
+  // Show/hide sex-specific and age-specific ROS sections
+  var isFemale = S.sex === 'F' || S.sex === 'X';
+  var isMale = S.sex === 'M' || S.sex === 'X';
+  var isGeri = S.age >= 65;
+
+  var fc = document.getElementById('ros-female-card');
+  var mc = document.getElementById('ros-male-card');
+  var gc = document.getElementById('ros-geri-card');
+  if (fc) fc.style.display = isFemale ? 'block' : 'none';
+  if (mc) mc.style.display = isMale ? 'block' : 'none';
+  if (gc) gc.style.display = isGeri ? 'block' : 'none';
+
+  show('ros');
+}
+
+function buildRosSummaryHtml() {
+  ROS.other = (document.getElementById('ros-other')||{}).value || '';
+  var h = '';
+  var hasAny = false;
+  var urgentList = [];
+
+  // Check for urgent symptoms
+  Object.keys(ROS_LABELS).forEach(function(sys) {
+    (ROS[sys]||[]).forEach(function(sym) {
+      ROS_URGENT.forEach(function(u) {
+        if (sym.toLowerCase().indexOf(u.toLowerCase()) !== -1) urgentList.push(sym);
+      });
+    });
+  });
+
+  // Urgent flag box
+  if (urgentList.length > 0) {
+    h += '<div class="ros-flag">';
+    h += '<strong>⚠ Symptoms to discuss promptly with your doctor:</strong>';
+    h += urgentList.map(function(s){ return '• '+s; }).join('<br>');
+    h += '</div>';
+  }
+
+  h += '<div class="ros-summary">';
+  h += '<div class="ros-summary-title">🩺 Review of Systems — Patient Report</div>';
+
+  Object.keys(ROS_LABELS).forEach(function(sys) {
+    var symptoms = ROS[sys] || [];
+    if (symptoms.length === 0) return;
+    hasAny = true;
+    h += '<div class="ros-system">';
+    h += '<div class="ros-system-name">'+ROS_LABELS[sys]+'</div>';
+    h += '<div class="ros-symptom-list">';
+    symptoms.forEach(function(s) {
+      var isUrgent = ROS_URGENT.some(function(u){ return s.toLowerCase().indexOf(u.toLowerCase()) !== -1; });
+      h += '<span class="ros-symptom-tag'+(isUrgent?' urgent':'')+'">'+s+'</span>';
+    });
+    h += '</div></div>';
+  });
+
+  if (!hasAny) {
+    h += '<div class="ros-none">No symptoms reported — all systems reviewed and negative.</div>';
+  }
+
+  if (ROS.other && ROS.other.trim()) {
+    h += '<div class="ros-system">';
+    h += '<div class="ros-system-name">📝 Additional Notes</div>';
+    h += '<div class="ros-other-text">'+ROS.other.trim().replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>';
+    h += '</div>';
+  }
+
+  h += '</div>';
+  return h;
+}
+
+// =========================================================
+// STATE
+// =========================================================
+var S = {
+  age:null, dob:'', sex:'',
+  eth:[], bmi:null, ht:null, wt:null,
+  smoke:'', packYrs:0, quitYrs:0,
+  alc:'', act:'', sex_act:'',
+  fhx:[], phx:[], rhx:[], env:[],
+  lastDone:{}
+};
+
+// Chip helpers
+function toggleChip(el, key) {
+  el.classList.toggle('on');
+  syncArr(key);
+}
+function single(el, key, val) {
+  el.parentElement.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+  el.classList.add('on');
+  S[key] = val;
+  if (key === 'smoke') {
+    document.getElementById('smoke-detail').style.display = (val !== 'never') ? 'grid' : 'none';
+  }
+}
+function syncArr(key) {
+  var containerMap = { eth:'eth-chips', fhx:'fhx-chips', phx:'phx-chips', rhx:'rhx-chips', env:'env-chips' };
+  var el = document.getElementById(containerMap[key]);
+  if (!el) return;
+  S[key] = Array.from(el.querySelectorAll('.chip.on')).map(function(c){ return c.textContent.trim(); });
+}
+function has(arr, term) { return arr.some(function(x){ return x.toLowerCase().indexOf(term.toLowerCase()) !== -1; }); }
+
+function updateAge() {
+  S.dob = document.getElementById('dob').value;
+  if (S.dob) {
+    var d = new Date(S.dob);
+    S.age = Math.floor((new Date() - d) / (365.25*24*3600*1000));
+  }
+}
+function calcBMI() {
+  var h = parseFloat(document.getElementById('ht').value);
+  var w = parseFloat(document.getElementById('wt').value);
+  S.ht = h; S.wt = w;
+  if (h && w) {
+    S.bmi = w / ((h/100)*(h/100));
+    var cat = S.bmi<18.5?'Underweight':S.bmi<25?'Normal weight':S.bmi<30?'Overweight':'Obese';
+    document.getElementById('bmi-disp').value = S.bmi.toFixed(1) + '  (' + cat + ')';
+  }
+}
+
+function goRisk() {
+  S.sex = document.getElementById('sex').value;
+  updateAge();
+  S.packYrs = parseFloat(document.getElementById('packyrs').value)||0;
+  S.quitYrs = parseFloat(document.getElementById('quityr').value)||0;
+  document.getElementById('repro-card').style.display = (S.sex === 'F' || S.sex === 'X') ? 'block' : 'none';
+  show('risk');
+}
+
+function show(id) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('page-'+id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// =========================================================
+// SCREENING ENGINE
+// =========================================================
+function generate() {
+  var age = S.age, sex = S.sex||'X', bmi = S.bmi;
+  var smoke = S.smoke, packYrs = S.packYrs, quitYrs = S.quitYrs;
+  var alc = S.alc, act = S.act, sexact = S.sex_act;
+  var fhx = S.fhx, phx = S.phx, rhx = S.rhx, env = S.env, eth = S.eth;
+  var h = has;
+
+  // Convenience risk flags
+  var isF = sex==='F'||sex==='X';
+  var isM = sex==='M'||sex==='X';
+  var overweight = bmi && bmi >= 25;
+  var obese = bmi && bmi >= 30;
+  var highCVRisk = h(phx,'hypertension')||h(phx,'diabetes')||h(phx,'heart disease')||h(phx,'cholesterol')||obese||h(fhx,'heart disease');
+  var highRiskEth = h(eth,'south asian')||h(eth,'indigenous')||h(eth,'black')||h(eth,'hispanic')||h(eth,'latino');
+
+  var items = [];
+  function add(o){ items.push(o); }
+
+  // ---- CANCER ----
+
+  // Colorectal
+  if (age >= 45 && age <= 75) {
+    var crcHighRisk = h(fhx,'colorectal')||h(fhx,'lynch')||h(phx,'IBD');
+    add({cat:'Cancer Screening', icon:'🔬', name:'Colorectal Cancer Screening',
+      detail: crcHighRisk
+        ? 'High-risk: due to family history, Lynch syndrome, or IBD — colonoscopy recommended starting earlier and more frequently. Discuss timing with your physician.'
+        : 'Annual FIT (fecal immunochemical test) is the preferred first-line test in Canada. Alternatively: stool DNA every 1–3 years, or colonoscopy every 10 years. FIT is non-invasive, free, and effective.',
+      freq: crcHighRisk ? 'Colonoscopy every 1–5 yrs (as advised)' : 'Annual FIT or colonoscopy every 10 yrs',
+      urgency: crcHighRisk ? 'overdue' : (age>=50 ? 'due-soon' : 'upcoming'),
+      tags:['USPSTF 2021','Canadian Task Force','ACS'], highRisk: crcHighRisk,
+      source:'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening',
+      intervalMonths: crcHighRisk ? 12 : 12 });
+  } else if (age < 45 && (h(fhx,'colorectal')||h(fhx,'lynch')||h(phx,'IBD'))) {
+    add({cat:'Cancer Screening', icon:'⚠️', name:'Colorectal Cancer Screening (High Risk — Early Start)',
+      detail:'Family history or IBD indicates colonoscopy before age 45. Generally: 10 years before youngest affected relative, or age 40–45 for first-degree family history.',
+      freq:'Colonoscopy — discuss timing with physician', urgency:'overdue', highRisk:true,
+      tags:['High Risk','ACS'],
+      source:'https://www.cancer.org/cancer/colon-rectal-cancer/detection-diagnosis-staging/acs-recommendations.html',
+      intervalMonths: 60 });
+  }
+
+  // Breast
+  if (isF) {
+    var brcaRisk = h(fhx,'brca')||h(fhx,'ovarian')||h(fhx,'breast');
+    if (brcaRisk && age >= 25) {
+      add({cat:'Cancer Screening', icon:'🎗', name:'Breast Cancer Screening — High Risk',
+        detail:'BRCA1/2 carrier or strong family history: annual MRI + mammography starting age 25–30. Also strongly consider genetic counselling referral.',
+        freq:'Annual MRI + Mammography', urgency:'overdue', highRisk:true,
+        tags:['High Risk','ACS','Genetic Counselling'],
+        source:'https://www.cancer.org/cancer/breast-cancer/screening-tests-and-early-detection.html',
+        intervalMonths:12});
+    } else if (age >= 40 && age <= 44) {
+      add({cat:'Cancer Screening', icon:'🎗', name:'Breast Cancer Screening',
+        detail:'Mammography can begin at 40–44 — the ACS recommends annual, while the Canadian Task Force recommends starting at 50 for average-risk women. Discuss with your physician based on your values.',
+        freq:'Annual mammography (recommended; shared decision)', urgency:'upcoming',
+        tags:['ACS 2024','USPSTF 2024'],
+        source:'https://www.cancer.org/cancer/breast-cancer/screening-tests-and-early-detection/breast-cancer-screening-guidelines-for-women.html',
+        intervalMonths:12});
+    } else if (age >= 45 && age <= 54) {
+      add({cat:'Cancer Screening', icon:'🎗', name:'Breast Cancer Screening',
+        detail:'Annual mammography recommended. Digital mammography or 3D tomosynthesis are both acceptable. Your most important appointment of the year.',
+        freq:'Annual mammography', urgency:'due-soon',
+        tags:['ACS 2024','USPSTF 2024'],
+        source:'https://www.cancer.org/cancer/breast-cancer/screening-tests-and-early-detection/breast-cancer-screening-guidelines-for-women.html',
+        intervalMonths:12});
+    } else if (age >= 55) {
+      add({cat:'Cancer Screening', icon:'🎗', name:'Breast Cancer Screening',
+        detail:'Every 1–2 years — your choice. Continue as long as you are in good health and life expectancy is ≥10 years. Annual is preferred if possible.',
+        freq:'Every 1–2 years', urgency:'due-soon',
+        tags:['ACS 2024'],
+        source:'https://www.cancer.org/cancer/breast-cancer/screening-tests-and-early-detection/breast-cancer-screening-guidelines-for-women.html',
+        intervalMonths:24});
+    }
+  }
+
+  // Cervical
+  if (isF) {
+    if (age >= 21 && age <= 29) {
+      add({cat:'Cancer Screening', icon:'🔬', name:'Cervical Cancer Screening (Pap Smear)',
+        detail:'Pap smear every 3 years. HPV testing alone is not recommended under age 30. Result of HPV vaccination programs means many women may have fewer abnormalities.',
+        freq:'Every 3 years', urgency:'upcoming',
+        tags:['USPSTF 2018','BC Cancer'],
+        source:'https://www.bccancer.bc.ca/screening/cervix',
+        intervalMonths:36});
+    } else if (age >= 30 && age <= 65) {
+      add({cat:'Cancer Screening', icon:'🔬', name:'Cervical Cancer Screening (Pap + HPV)',
+        detail:'Co-test (Pap + HPV) every 5 years is preferred. Alternatively: Pap alone every 3 years, or hrHPV test alone every 5 years. Negative co-test at 30–65 is very reassuring.',
+        freq:'Every 3–5 years', urgency:'upcoming',
+        tags:['USPSTF 2018','ACS','BC Cancer'],
+        source:'https://www.bccancer.bc.ca/screening/cervix',
+        intervalMonths:60});
+    } else if (age > 65 && !h(rhx,'abnormal pap')) {
+      add({cat:'Cancer Screening', icon:'✅', name:'Cervical Cancer Screening',
+        detail:'Can discontinue after age 65 with adequate prior negative screening (3 consecutive negative Pap or 2 consecutive negative co-tests in last 10 years, most recent within 5 years).',
+        freq:'Can stop — if adequate prior screening', urgency:'not-due',
+        tags:['USPSTF 2018'],
+        source:'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/cervical-cancer-screening',
+        intervalMonths:0});
+    }
+  }
+
+  // Lung
+  var lungHR = (smoke==='current')||(smoke==='former'&&quitYrs<15);
+  if (age>=50 && age<=80 && lungHR && packYrs>=20) {
+    add({cat:'Cancer Screening', icon:'🫁', name:'Lung Cancer Screening (LDCT)',
+      detail:'Annual low-dose CT of the chest. You meet the USPSTF high-risk criteria: age 50–80, ≥20 pack-year history, current smoker or quit within 15 years. Screening reduces lung cancer mortality by ~20%.',
+      freq:'Annual LDCT', urgency:'overdue', highRisk:true,
+      tags:['USPSTF 2021','Canadian Task Force'],
+      source:'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/lung-cancer-screening',
+      intervalMonths:12});
+  }
+
+  // Prostate
+  if (isM) {
+    var pHR = h(fhx,'prostate')||h(eth,'black')||h(eth,'african');
+    if (pHR && age>=40) {
+      add({cat:'Cancer Screening', icon:'♟', name:'Prostate Cancer Screening (PSA) — High Risk',
+        detail:'Black men and those with a first-degree family member diagnosed with prostate cancer before age 65 are 2–3× more likely to develop prostate cancer. Discuss PSA screening beginning at age 40–45 with your physician.',
+        freq:'Discuss with physician — start 40–45', urgency:'due-soon', highRisk:true,
+        tags:['ACS','AUA 2023','High Risk'],
+        source:'https://www.cancer.org/cancer/prostate-cancer/detection-diagnosis-staging/acs-recommendations.html',
+        intervalMonths:12});
+    } else if (age>=55 && age<=69) {
+      add({cat:'Cancer Screening', icon:'♟', name:'Prostate Cancer Screening (PSA)',
+        detail:'Shared decision-making is recommended. PSA can detect early prostate cancer, but also leads to overdiagnosis and overtreatment. Discuss benefits and harms with your physician before testing.',
+        freq:'Annual if chosen (shared decision)', urgency:'upcoming',
+        tags:['USPSTF 2018','AUA 2023'],
+        source:'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/prostate-cancer-screening',
+        intervalMonths:12});
+    }
+  }
+
+  // Skin
+  var skinHR = h(fhx,'melanoma')||h(fhx,'skin cancer')||h(env,'high uv')||h(env,'outdoor sun');
+  if (skinHR) {
+    add({cat:'Cancer Screening', icon:'☀️', name:'Skin Cancer Screening — High Risk',
+      detail:'Annual full-body skin examination with a dermatologist recommended. Monthly self-examination of all skin surfaces for new or changing moles or lesions. Use the ABCDEs: Asymmetry, Border, Color, Diameter, Evolution.',
+      freq:'Annual dermatology exam + monthly self-exam', urgency:'due-soon', highRisk:true,
+      tags:['ACS','High Risk'],
+      source:'https://www.aad.org/public/diseases/skin-cancer/find/check-skin',
+      intervalMonths:12});
+  } else {
+    add({cat:'Cancer Screening', icon:'☀️', name:'Skin Self-Examination',
+      detail:'Monthly self-examination of all skin surfaces. Look for new spots, moles that are changing in size, shape, or color, or any sore that does not heal. Report concerns to your physician promptly.',
+      freq:'Monthly self-exam', urgency:'not-due',
+      tags:['ACS'],
+      source:'https://www.cancer.ca/en/cancer-information/cancer-types/skin-non-melanoma/risks',
+      intervalMonths:1});
+  }
+
+  // Genetic counselling triggers
+  if (h(fhx,'brca')||h(fhx,'ovarian')||h(fhx,'lynch')||h(fhx,'pancreatic')) {
+    add({cat:'Cancer Screening', icon:'🧬', name:'Genetic Counselling Referral',
+      detail:'Your family history suggests you may benefit from genetic testing and counselling for hereditary cancer syndromes (BRCA1/2, Lynch syndrome, or other). Referral to a hereditary cancer program (e.g., BC Cancer Hereditary Cancer Program).',
+      freq:'One-time referral — discuss with physician', urgency:'due-soon', highRisk:true,
+      tags:['BC Cancer HCP','High Risk'],
+      source:'https://www.bccancer.bc.ca/our-services/services/hereditary-cancer-program',
+      intervalMonths:0});
+  }
+
+  // ---- CARDIOVASCULAR ----
+
+  // Blood pressure
+  if (age>=18 && age<=39) {
+    add({cat:'Cardiovascular', icon:'❤️', name:'Blood Pressure Measurement',
+      detail:'If previously normal, check every 2 years. Hypertension is ≥130/80 mmHg (AHA/ACC 2017) or ≥140/90 (Health Canada). Measuring at home with a validated device is also recommended.',
+      freq:'Every 2 years', urgency:'upcoming',
+      tags:['USPSTF 2021','AHA/ACC','Heart & Stroke Canada'],
+      source:'https://www.heartandstroke.ca/heart/risk-and-prevention/condition-risk-factors/high-blood-pressure',
+      intervalMonths:24});
+  } else if (age>=40) {
+    add({cat:'Cardiovascular', icon:'❤️', name:'Blood Pressure Measurement',
+      detail:'Annual check is recommended from age 40. Target: <130/80 mmHg. If elevated, home monitoring twice daily for 7 days provides a more accurate assessment. Optimal blood pressure is <120/80 mmHg.',
+      freq:'Annual', urgency: highCVRisk ? 'overdue' : 'due-soon',
+      tags:['USPSTF 2021','AHA/ACC','Heart & Stroke Canada'],
+      source:'https://www.heartandstroke.ca/heart/risk-and-prevention/condition-risk-factors/high-blood-pressure',
+      intervalMonths:12});
+  }
+
+  // Lipids / Cholesterol
+  var lipidHR = highCVRisk || h(phx,'diabetes') || overweight || h(fhx,'heart disease');
+  if ((isM && age>=35) || (isF && age>=45) || (lipidHR && age>=20)) {
+    add({cat:'Cardiovascular', icon:'🩸', name:'Cholesterol & Lipid Panel',
+      detail:'Fasting lipid panel (total cholesterol, LDL, HDL, triglycerides). Used with age and risk factors to calculate 10-year ASCVD risk score. Statin therapy is recommended if 10-year ASCVD risk ≥10% and age 40–75.',
+      freq: lipidHR ? 'Every 1–3 years' : 'Every 5 years',
+      urgency: lipidHR ? 'due-soon' : 'upcoming',
+      tags:['ACC/AHA 2018','CCS'],
+      source:'https://www.ccs.ca/en/guidelines/guidelines-library/dyslipidemia',
+      intervalMonths: lipidHR ? 24 : 60});
+  }
+
+  // Diabetes
+  var dmHR = overweight||h(fhx,'diabetes')||h(phx,'prediabetes')||h(rhx,'gestational')||h(phx,'PCOS')||highRiskEth||h(phx,'hypertension');
+  if ((age>=35 && age<=70 && overweight) || (age>=18 && dmHR)) {
+    add({cat:'Cardiovascular', icon:'🍬', name:'Diabetes Screening (HbA1c or Fasting Glucose)',
+      detail:'Screen with HbA1c, fasting plasma glucose, or oral glucose tolerance test. Normal HbA1c: <5.7% (ADA) or <6.0% (CDA). Prediabetes: HbA1c 5.7–6.4%. Intensive lifestyle change reduces conversion to diabetes by ~58%.',
+      freq: h(phx,'prediabetes') ? 'Annually' : 'Every 3 years',
+      urgency: h(phx,'prediabetes') ? 'overdue' : 'due-soon',
+      tags:['USPSTF 2021','ADA 2024','Diabetes Canada'],
+      source:'https://guidelines.diabetes.ca/cpg',
+      intervalMonths: h(phx,'prediabetes') ? 12 : 36});
+  }
+
+  // AAA
+  if (isM && age>=65 && age<=75 && (smoke==='former'||smoke==='current')) {
+    add({cat:'Cardiovascular', icon:'🫀', name:'Abdominal Aortic Aneurysm (AAA) Ultrasound',
+      detail:'One-time abdominal ultrasound for men 65–75 who have ever smoked. AAA is often asymptomatic until rupture, which is 80%+ fatal. Screening reduces AAA-related mortality by ~45%.',
+      freq:'One-time abdominal ultrasound', urgency:'overdue', highRisk:true,
+      tags:['USPSTF 2019','One-time only'],
+      source:'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/abdominal-aortic-aneurysm-screening',
+      intervalMonths:0});
+  }
+
+  // Aspirin primary prevention
+  if (age>=40 && age<=59 && highCVRisk && !h(phx,'heart disease')) {
+    add({cat:'Cardiovascular', icon:'💊', name:'Aspirin for Primary CVD Prevention',
+      detail:'Low-dose aspirin (81 mg/day) may be recommended for adults 40–59 with ≥10% 10-year cardiovascular risk and no increased bleeding risk. The USPSTF 2022 guidance is to NOT start aspirin in those 60+. Discuss benefits vs. bleeding risks with your physician.',
+      freq:'Discuss with physician — shared decision', urgency:'upcoming',
+      tags:['USPSTF 2022'],
+      source:'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/aspirin-use-to-prevent-cardiovascular-disease-preventive-medication',
+      intervalMonths:0});
+  }
+
+  // ECG / cardiac
+  if (h(fhx,'sudden cardiac death')||h(phx,'atrial fibrillation')) {
+    add({cat:'Cardiovascular', icon:'📈', name:'12-Lead ECG',
+      detail:'Not routinely recommended for asymptomatic adults without symptoms. However, with family history of sudden cardiac death <50 or known atrial fibrillation, discuss with your physician whether a resting ECG or 24h Holter monitor is indicated.',
+      freq:'Discuss with physician', urgency:'upcoming',
+      tags:['CCS','Heart & Stroke'],
+      source:'https://www.ccs.ca',
+      intervalMonths:0});
+  }
+
+  // ---- METABOLIC ----
+
+  // Osteoporosis
+  if (isF && age>=65) {
+    add({cat:'Metabolic & Bone Health', icon:'🦴', name:'Bone Density Scan (DEXA)',
+      detail:'DEXA scan recommended for all women ≥65. The T-score classifies normal bone density (>-1.0), osteopenia (-1.0 to -2.5), or osteoporosis (<-2.5). Osteoporosis Canada guidelines direct treatment decisions.',
+      freq:'Every 2–5 years based on T-score results', urgency:'due-soon',
+      tags:['USPSTF 2018','Osteoporosis Canada'],
+      source:'https://osteoporosiscanada.ca/health-info/bone-health/bone-density-testing/',
+      intervalMonths:60});
+  } else if (isF && age>=50 && (h(phx,'osteoporosis')||h(phx,'steroid')||h(fhx,'osteoporosis')||h(rhx,'postmenopaus')||(S.bmi&&S.bmi<20))) {
+    add({cat:'Metabolic & Bone Health', icon:'🦴', name:'Bone Density Scan (DEXA) — Elevated Risk',
+      detail:'Earlier DEXA recommended due to risk factors: postmenopause, steroid use, low BMI (<20), family history of fragility fracture, or prior fracture after age 40. FRAX score can estimate 10-year fracture probability.',
+      freq:'Discuss timing with physician', urgency:'due-soon', highRisk:true,
+      tags:['Osteoporosis Canada','High Risk'],
+      source:'https://osteoporosiscanada.ca/health-info/bone-health/bone-density-testing/',
+      intervalMonths:60});
+  } else if (isM && age>=70) {
+    add({cat:'Metabolic & Bone Health', icon:'🦴', name:'Bone Density Scan (DEXA)',
+      detail:'Men ≥70 benefit from baseline DEXA, especially with risk factors (smoking, low BMI, steroid use, prior fracture, hypogonadism). Osteoporosis affects 1 in 8 Canadian men.',
+      freq:'Discuss with physician', urgency:'upcoming',
+      tags:['Osteoporosis Canada'],
+      source:'https://osteoporosiscanada.ca',
+      intervalMonths:60});
+  }
+
+  // Thyroid
+  if (age>=60 || h(phx,'autoimmune')||h(phx,'thyroid')||h(fhx,'thyroid')) {
+    add({cat:'Metabolic & Bone Health', icon:'🦋', name:'Thyroid Function (TSH)',
+      detail:'TSH is the most sensitive test for thyroid dysfunction. Not universally recommended by USPSTF but widely endorsed by Canadian guidelines for women >50, all adults >60, and anyone with autoimmune conditions, fatigue, or weight changes.',
+      freq: age>=60 ? 'Every 3–5 years' : 'If symptoms develop', urgency: age>=60 ? 'upcoming' : 'not-due',
+      tags:['Canadian Task Force','CMA'],
+      source:'https://canadiantaskforce.ca/',
+      intervalMonths: age>=60 ? 60 : 0});
+  }
+
+  // Vitamin D
+  if (age>=65 || h(phx,'osteoporosis') || h(eth,'south asian') || h(eth,'black') || h(eth,'indigenous')) {
+    add({cat:'Metabolic & Bone Health', icon:'☀️', name:'Vitamin D Supplementation',
+      detail:'Empiric supplementation is recommended for those at high risk of deficiency (age 65+, dark skin, limited sun, malabsorption, obesity). Health Canada recommends 400–600 IU/day; Osteoporosis Canada recommends 800–2000 IU/day for adults ≥50. Routine serum testing is generally not required.',
+      freq:'Daily supplementation — discuss dose with physician', urgency:'upcoming',
+      tags:['Osteoporosis Canada','Health Canada'],
+      source:'https://osteoporosiscanada.ca/health-info/bone-health/vitamin-d/',
+      intervalMonths:0});
+  }
+
+  // Sleep
+  if (h(phx,'sleep apnea')||obese||h(phx,'hypertension')||(isM&&age>=50)) {
+    add({cat:'Metabolic & Bone Health', icon:'😴', name:'Sleep Apnea Assessment (STOP-BANG)',
+      detail:'Obstructive sleep apnea (OSA) is underdiagnosed and linked to hypertension, AF, diabetes, and cognitive decline. STOP-BANG questionnaire is the validated primary-care screen. Home sleep apnea testing (HSAT) or in-lab polysomnography confirm diagnosis.',
+      freq:'Discuss with physician if symptoms present', urgency: h(phx,'sleep apnea') ? 'overdue' : 'upcoming',
+      tags: h(phx,'sleep apnea') ? ['Diagnosed — ensure CPAP follow-up','AASM'] : ['AASM','CTS'],
+      highRisk: h(phx,'sleep apnea'),
+      source:'https://www.lung.ca/lung-health/lung-disease/sleep-apnea',
+      toolLink:'http://stopbang.ca/osa/screening.php',
+      toolLabel:'STOP-BANG Questionnaire (stopbang.ca)',
+      intervalMonths:0});
+  }
+
+  // ---- MENTAL HEALTH ----
+
+  add({cat:'Mental Health', icon:'🧠', name:'Depression Screening (PHQ-9)',
+    detail:'Two-question screen: "Over the past 2 weeks, how often have you felt down, depressed, or hopeless?" and "…little interest or pleasure in doing things?" Annual screening recommended for all adults. PHQ-9 follows if either answer is positive. Effective treatments exist — don\'t wait.',
+    freq:'Annual', urgency: h(phx,'depression')||h(phx,'anxiety') ? 'due-soon' : 'upcoming',
+    tags:['USPSTF 2023','CMHA'],
+    source:'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/depression-in-adults-screening',
+    toolLink:'https://www.phqscreeners.com/select-screener',
+    toolLabel:'PHQ-9 Questionnaire (phqscreeners.com)',
+    intervalMonths:12});
+
+  add({cat:'Mental Health', icon:'🧘', name:'Anxiety Screening (GAD-7)',
+    detail:'USPSTF 2023 recommends routine anxiety screening for adults under 65. Seven-item GAD-7 identifies generalized anxiety disorder, social anxiety, and panic. Even a two-question screen can prompt meaningful conversation with your physician.',
+    freq:'Annual', urgency:'upcoming',
+    tags:['USPSTF 2023'],
+    source:'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/anxiety-in-adults-screening',
+    toolLink:'https://www.phqscreeners.com/select-screener',
+    toolLabel:'GAD-7 Questionnaire (phqscreeners.com)',
+    intervalMonths:12});
+
+  add({cat:'Mental Health', icon:'🍷', name:'Unhealthy Alcohol Use Screening (AUDIT-C)',
+    detail:'Three validated questions about frequency, quantity, and binge drinking. Scores ≥3 (women) or ≥4 (men) suggest hazardous drinking. Brief physician counselling reduces consumption by 15–30%. Available online at phac-aspc.gc.ca.',
+    freq:'Annual', urgency:'upcoming',
+    tags:['USPSTF 2018','CCSA'],
+    source:'https://www.ccsa.ca/sites/default/files/2019-04/2012-Summary-Low-Risk-Alcohol-Drinking-Guidelines-Brochure-en.pdf',
+    toolLink:'https://auditscreen.org/check-your-drinking/',
+    toolLabel:'AUDIT-C Online Screen (auditscreen.org)',
+    intervalMonths:12});
+
+  if (age>=65) {
+    add({cat:'Mental Health', icon:'🧩', name:'Cognitive Screening (Mini-Cog)',
+      detail:'Brief 3-item recall + clock drawing test. Takes under 5 minutes. Annual cognitive screen from age 65 is recommended by Canadian guidelines to detect early mild cognitive impairment or dementia when intervention may slow progression. Results are confidential with your physician.',
+      freq:'Annual from age 65', urgency:'due-soon',
+      tags:['Canadian Cognitive Neuroscience Alliance','CCNA'],
+      source:'https://ccna-ccnv.ca/',
+      toolLink:'https://mini-cog.com/',
+      toolLabel:'Mini-Cog Instructions & Form (mini-cog.com)',
+      intervalMonths:12});
+
+    add({cat:'Mental Health', icon:'⚖️', name:'Fall Risk Assessment',
+      detail:'Falls are the leading cause of injury hospitalization in Canadians 65+. Assessment includes medication review, vision, gait and balance testing (Timed Up & Go), home hazard evaluation. Exercise programs (balance + strength) reduce fall risk by 23–40%.',
+      freq:'Annual', urgency:'due-soon',
+      tags:['USPSTF 2018','PHAC'],
+      source:'https://www.canada.ca/en/public-health/services/health-promotion/aging-seniors/publications/publications-general-public/you-can-prevent-falls.html',
+      toolLink:'https://www.cdc.gov/steadi/pdf/STEADI-Assessment-30Sec-508.pdf',
+      toolLabel:'Fall Risk Self-Assessment (CDC STEADI)',
+      intervalMonths:12});
+  }
+
+  if (isF && age>=18 && age<=64) {
+    add({cat:'Mental Health', icon:'🛡', name:'Intimate Partner Violence Screening',
+      detail:'USPSTF recommends that clinicians ask women of reproductive age about IPV and refer to support services if positive. BC has specific protocols — speak with your physician confidentially. Violence against women is a health issue, not a private one.',
+      freq:'Annually (or when relevant)', urgency:'upcoming',
+      tags:['USPSTF 2018','BC Ministry of Health'],
+      source:'https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/intimate-partner-violence-elder-abuse-and-abuse-of-vulnerable-adults-screening',
+      intervalMonths:12});
+  }
+
+  if (h(env,'military')||h(env,'veteran')||h(phx,'depression')) {
+    add({cat:'Mental Health', icon:'💔', name:'PTSD Screening',
+      detail:'Primary care PTSD screen (PC-PTSD-5) recommended for veterans and those with trauma history. PTSD is underdiagnosed. Effective treatments include CPT, EMDR, and PE therapy.',
+      freq:'Discuss with physician', urgency:'upcoming',
+      tags:['VA/DoD','CPA'],
+      source:'https://www.ptsd.va.gov/professional/assessment/screens/pc-ptsd.asp',
+      toolLink:'https://www.ptsd.va.gov/professional/assessment/screens/pc-ptsd.asp',
+      toolLabel:'PC-PTSD-5 Screen (ptsd.va.gov)',
+      intervalMonths:0});
+  }
+
+  // ---- INFECTIOUS DISEASE ----
+
+  if (age>=15 && age<=65) {
+    add({cat:'Infectious Disease', icon:'🔴', name:'HIV Screening',
+      detail:'USPSTF recommends at least one HIV test for everyone 15–65. Annual testing for higher-risk individuals (MSM, injection drug use, multiple partners, prior STI). BC has the STOP HIV program — free testing widely available. Knowing your status allows treatment that brings viral load to undetectable (U=U).',
+      freq: (sexact==='msm'||sexact==='multi') ? 'Annual (high risk)' : 'At least once in lifetime',
+      urgency:'upcoming', highRisk: sexact==='msm'||sexact==='multi',
+      tags:['USPSTF 2019','BC CDC'],
+      source:'https://www.bccdc.ca/health-info/diseases-conditions/hiv',
+      intervalMonths: (sexact==='msm'||sexact==='multi') ? 12 : 0});
+  }
+
+  if (age>=18 && age<=79) {
+    add({cat:'Infectious Disease', icon:'🟡', name:'Hepatitis C Screening (HCV)',
+      detail:'One-time HCV antibody test for all adults 18–79. Those born 1945–1965 are highest yield (Baby Boomer cohort). Curative direct-acting antiviral treatment now available (>95% cure rate). Repeat if ongoing risk factors.',
+      freq:'One-time screening (more if ongoing risk)', urgency:'upcoming',
+      tags:['USPSTF 2020','BCCDC'],
+      source:'https://www.bccdc.ca/health-info/diseases-conditions/hepatitis-c',
+      intervalMonths:0});
+  }
+
+  if (!h(phx,'hepatitis B') && age>=18) {
+    add({cat:'Infectious Disease', icon:'🟠', name:'Hepatitis B Screening & Vaccination',
+      detail:'HBsAg screening recommended for those born in HBV-endemic regions, unvaccinated adults, household contacts of HBV-infected persons. Hepatitis B is preventable with a highly effective 3-dose vaccine series.',
+      freq:'One-time screening; vaccination if unimmunized', urgency:'upcoming',
+      tags:['BCCDC','USPSTF'],
+      source:'https://www.bccdc.ca/health-info/diseases-conditions/hepatitis-b',
+      intervalMonths:0});
+  }
+
+  if (sexact==='msm'||sexact==='multi'||(isF&&age<=24)) {
+    add({cat:'Infectious Disease', icon:'🧫', name:'STI Screen (Chlamydia, Gonorrhea, Syphilis)',
+      detail: sexact==='msm'
+        ? 'MSM: screen at minimum annually — urethral, rectal, and pharyngeal swabs + syphilis serology + HIV. Every 3–6 months if multiple partners. BCCDC provides free sexual health clinic access in BC.'
+        : isF&&age<=24 ? 'Annual chlamydia and gonorrhea screening for all sexually active women ≤24, and older women with new/multiple partners. Chlamydia is the most common reportable STI in Canada; usually asymptomatic.'
+        : 'Annual STI screen for gonorrhea, chlamydia, and syphilis for those with multiple partners.',
+      freq: sexact==='msm' ? 'Every 3–12 months' : 'Annual',
+      urgency: sexact==='msm' ? 'overdue' : 'due-soon',
+      highRisk: sexact==='msm',
+      tags:['USPSTF 2021','BCCDC','PHAC'],
+      source:'https://www.bccdc.ca/health-info/diseases-conditions/sexually-transmitted-infections',
+      intervalMonths: sexact==='msm' ? 6 : 12});
+  }
+
+  if (h(env,'healthcare')||h(env,'correctional')||h(env,'born or lived outside canada')) {
+    add({cat:'Infectious Disease', icon:'🫁', name:'Tuberculosis (TB) Screening — IGRA',
+      detail:'IGRA (QuantiFERON-TB Gold or T-SPOT) blood test recommended for healthcare workers, recent immigrants from endemic countries, and those in high-risk settings. Latent TB treatment prevents reactivation and is highly effective.',
+      freq:'Baseline; repeat per occupational exposure protocol', urgency:'due-soon', highRisk:true,
+      tags:['BCCDC','CTFPHC','High Risk'],
+      source:'https://www.bccdc.ca/health-info/diseases-conditions/tuberculosis-tb',
+      intervalMonths:0});
+  }
+
+  // ---- IMMUNIZATIONS ----
+
+  add({cat:'Immunizations', icon:'💉', name:'Influenza Vaccine (Annual)',
+    detail:'Annual influenza vaccine for everyone ≥6 months. Best timing: October–November. The vaccine is reformulated each year to match circulating strains. High-dose vaccine is recommended for those ≥65. In BC, the flu vaccine is free for all residents.',
+    freq:'Annual (October–November)', urgency:'due-soon',
+    tags:['NACI','BC Immunization Program'],
+    source:'https://immunizebc.ca/influenza',
+    intervalMonths:12});
+
+  add({cat:'Immunizations', icon:'💉', name:'COVID-19 — Updated Booster',
+    detail:'Stay current with updated bivalent/XBB booster formulations as recommended by NACI. Annual boosters are currently recommended for most adults, with priority given to those 65+ and immunocompromised. BC COVAX provides free updated vaccines.',
+    freq:'Annual (per updated NACI guidance)', urgency:'upcoming',
+    tags:['NACI 2024','BC CDC'],
+    source:'https://www.canada.ca/en/public-health/services/diseases/coronavirus-disease-covid-19/vaccines.html',
+    intervalMonths:12});
+
+  add({cat:'Immunizations', icon:'💉', name:'Tetanus-Diphtheria-Pertussis (Td / Tdap)',
+    detail:'One dose of Tdap (tetanus + diphtheria + pertussis) if not already received as an adult, then Td booster every 10 years. Tdap is also recommended in every pregnancy (27–32 weeks) to protect newborns from whooping cough.',
+    freq:'Every 10 years (one-time Tdap; then Td)', urgency:'upcoming',
+    tags:['NACI','immunizebc.ca'],
+    source:'https://immunizebc.ca/tetanus-diphtheria-pertussis-tdap-td',
+    intervalMonths:120});
+
+  if (age>=50) {
+    add({cat:'Immunizations', icon:'💉', name:'Shingles Vaccine (Shingrix)',
+      detail:'2-dose Shingrix (recombinant) series recommended for all adults ≥50, even those who had shingles or prior Zostavax. >90% effective against shingles and post-herpetic neuralgia. Doses 2–6 months apart. In BC, partially covered — check eligibility.',
+      freq:'2-dose series (one-time), 2–6 months apart', urgency: age>=60 ? 'overdue' : 'due-soon',
+      tags:['NACI','immunizebc.ca'],
+      source:'https://immunizebc.ca/shingles-herpes-zoster',
+      intervalMonths:0});
+  }
+
+  if (age>=65) {
+    add({cat:'Immunizations', icon:'💉', name:'Pneumococcal Vaccine (PCV20)',
+      detail:'One dose of PCV20 (Prevnar 20) protects against 20 strains of pneumococcus causing pneumonia and meningitis. If previously received PPSV23 or PCV13, discuss updated schedule with your pharmacist or physician.',
+      freq:'One dose at 65+ (review prior history)', urgency:'due-soon',
+      tags:['NACI 2023','immunizebc.ca'],
+      source:'https://immunizebc.ca/pneumococcal-disease',
+      intervalMonths:0});
+
+    add({cat:'Immunizations', icon:'💉', name:'RSV Vaccine (Arexvy / mRESVIA)',
+      detail:'RSV vaccination recommended for adults 60+. Single dose of Arexvy (GSK) or mRESVIA (Moderna mRNA-based). Particularly important for those with chronic lung disease, heart failure, or diabetes. New recommendation as of 2023.',
+      freq:'Discuss with physician (single dose)', urgency:'upcoming',
+      tags:['NACI 2023','CDC'],
+      source:'https://www.canada.ca/en/public-health/services/diseases/respiratory-syncytial-virus-rsv.html',
+      intervalMonths:0});
+  }
+
+  if (age<=26 || (sexact==='msm'||sexact==='multi')) {
+    add({cat:'Immunizations', icon:'💉', name:'HPV Vaccine (Gardasil-9)',
+      detail:'Recommended for all individuals up to age 26. Ages 27–45: discuss with physician — benefit is lower but may be appropriate for some. 2-dose series if starting before age 15; 3-dose series if ≥15. Prevents cervical, anal, oropharyngeal, and other cancers.',
+      freq: age<15 ? '2-dose series' : '3-dose series', urgency: age<=26 ? 'due-soon' : 'upcoming',
+      tags:['NACI','ACIP'],
+      source:'https://immunizebc.ca/human-papillomavirus-hpv',
+      intervalMonths:0});
+  }
+
+  // Hep A (travel / high risk)
+  if (h(env,'born or lived outside canada')||sexact==='msm') {
+    add({cat:'Immunizations', icon:'💉', name:'Hepatitis A Vaccine',
+      detail:'Recommended for MSM, travellers to endemic regions, and those not previously immunized. 2-dose series provides lifelong protection. Combination Hep A+B vaccine (Twinrix) available.',
+      freq:'2-dose series (if not previously immunized)', urgency:'due-soon',
+      tags:['NACI','BCCDC'],
+      source:'https://immunizebc.ca/hepatitis-a',
+      intervalMonths:0});
+  }
+
+  // ---- VISION & HEARING ----
+
+  if (age>=18 && age<40) {
+    add({cat:'Vision & Hearing', icon:'👁', name:'Eye Exam',
+      detail:'Recommended every 2 years for adults 20–39 with no known vision problems. Earlier if you notice changes in vision, headaches after screen time, or difficulty with night driving. In BC, routine eye exams are covered by MSP for children and adults 65+.',
+      freq:'Every 2 years', urgency:'upcoming',
+      tags:['Canadian Ophthalmological Society'],
+      source:'https://www.cos-sco.ca/vision-health/eye-examinations/',
+      intervalMonths:24});
+  } else if (age>=40 && age<65) {
+    add({cat:'Vision & Hearing', icon:'👁', name:'Comprehensive Eye Exam (Glaucoma + Presbyopia)',
+      detail:'Full eye exam every 2 years, including intraocular pressure and optic nerve assessment for glaucoma. Age 40 is when presbyopia ("arms-length reading") typically begins. In BC, adults 40–64 pay out-of-pocket (~$80–120) unless referred by a physician.',
+      freq:'Every 2 years', urgency:'due-soon',
+      tags:['Canadian Ophthalmological Society'],
+      source:'https://www.cos-sco.ca/vision-health/eye-examinations/',
+      intervalMonths:24});
+  } else if (age>=65) {
+    add({cat:'Vision & Hearing', icon:'👁', name:'Annual Eye Exam',
+      detail:'Annual comprehensive eye exam from age 65. MSP covers one exam per year in BC. Increased risk of glaucoma, age-related macular degeneration (AMD), cataracts, and diabetic retinopathy. Untreated vision loss is a major driver of falls and cognitive decline.',
+      freq:'Annual', urgency:'due-soon',
+      tags:['Canadian Ophthalmological Society','MSP-covered in BC'],
+      source:'https://www.cos-sco.ca/vision-health/eye-examinations/',
+      intervalMonths:12});
+  }
+
+  if (h(phx,'diabetes')) {
+    add({cat:'Vision & Hearing', icon:'👁', name:'Diabetic Retinopathy Exam (Dilated)',
+      detail:'Annual dilated fundus examination or validated retinal photography (e.g., BC\'s teleophthalmology program). Diabetic retinopathy is the leading cause of new blindness in working-age Canadians — but early treatment is highly effective.',
+      freq:'Annual', urgency:'overdue', highRisk:true,
+      tags:['Diabetes Canada','BC Retinal Program','High Risk'],
+      source:'https://guidelines.diabetes.ca/',
+      intervalMonths:12});
+  }
+
+  if (h(fhx,'glaucoma')||h(eth,'black')||(age>=65)) {
+    add({cat:'Vision & Hearing', icon:'🧿', name:'Glaucoma Screening',
+      detail:'Black adults have 4–5× higher glaucoma risk; those with family history also at elevated risk. Annual intraocular pressure + optic nerve evaluation from age 40 for high-risk groups. Glaucoma causes irreversible vision loss but is treatable if caught early.',
+      freq: age>=65 ? 'Annual (included in eye exam)' : 'Every 1–2 years', urgency:'due-soon', highRisk: h(eth,'black')||h(fhx,'glaucoma'),
+      tags: h(eth,'black') ? ['High Risk','Canadian Ophthalmological Society'] : ['Canadian Ophthalmological Society'],
+      source:'https://www.glaucomaresearch.ca/about-glaucoma/screening',
+      intervalMonths:12});
+  }
+
+  if (age>=50 || h(env,'high noise')) {
+    add({cat:'Vision & Hearing', icon:'👂', name:'Hearing Assessment (Pure Tone Audiogram)',
+      detail:'Hearing loss is the third most common chronic health condition — affecting 1 in 3 Canadians over 65. Baseline audiogram at 50, then every 3–5 years. Annual if high noise exposure. Untreated hearing loss is linked to accelerated cognitive decline.',
+      freq: h(env,'high noise') ? 'Annual' : 'Every 3–5 years from age 50', urgency:'upcoming',
+      tags:['Hearing Foundation of Canada','CAA'],
+      source:'https://www.chs.ca/hearing-health',
+      intervalMonths: h(env,'high noise') ? 12 : 48});
+  }
+
+  // ---- DENTAL ----
+  add({cat:'Dental & Oral Health', icon:'🦷', name:'Dental Exam, Cleaning & Oral Cancer Screen',
+    detail:'Professional cleaning and comprehensive exam every 6–12 months. Your dentist performs a visual oral cancer screen at every visit. X-rays every 1–2 years based on individual risk. Gum disease is linked to cardiovascular disease, diabetes, and adverse pregnancy outcomes. BC now has some dental coverage through the Canadian Dental Care Plan.',
+    freq:'Every 6–12 months', urgency:'due-soon',
+    tags:['CDA','ADA','Canadian Dental Care Plan'],
+    source:'https://www.canada.ca/en/services/benefits/dental/dental-care-plan.html',
+    intervalMonths:12});
+
+  // ---- FITNESS & LIFESTYLE ----
+
+  add({cat:'Fitness & Lifestyle', icon:'💪', name:'Physical Activity Assessment',
+    detail:'Canadian Physical Activity Guidelines: 150 min/week of moderate-vigorous aerobic activity + muscle-strengthening activities 2×/week. Reduces risk of cardiovascular disease, diabetes, cancer, depression, and dementia. Ask your physician for an Exercise is Medicine referral.',
+    freq:'Annual (discuss at checkup)', urgency: act==='sedentary' ? 'overdue' : 'upcoming',
+    tags:['CSEP Canadian Guidelines','WHO'],
+    source:'https://csepguidelines.ca/',
+    intervalMonths:12});
+
+  if (obese || (overweight && dmHR)) {
+    add({cat:'Fitness & Lifestyle', icon:'⚖️', name:'Weight Management Program',
+      detail:'USPSTF recommends referring adults with obesity (BMI ≥30) to intensive multicomponent behavioural weight loss programs. In BC, the BC Healthy Connections Project, Dietitian Services at 8-1-1, and Obesity Canada offer resources.',
+      freq:'Ongoing — physician referral recommended', urgency:'due-soon',
+      tags:['USPSTF 2018','Obesity Canada'],
+      source:'https://obesitycanada.ca/',
+      intervalMonths:0});
+  }
+
+  if (act==='sedentary') {
+    add({cat:'Fitness & Lifestyle', icon:'🏃', name:'Sedentary Behaviour Counselling',
+      detail:'Every hour of sitting is associated with increased cardiovascular and metabolic risk. Breaking up sitting with 2–3 minutes of light activity every 30 minutes significantly reduces health risks. A physical therapist or kinesiologist can create a safe starting plan.',
+      freq:'Address at next physician visit', urgency:'overdue',
+      tags:['CSEP','Heart & Stroke Canada'],
+      source:'https://csepguidelines.ca/',
+      intervalMonths:0});
+  }
+
+  if (age>=65) {
+    add({cat:'Fitness & Lifestyle', icon:'🚗', name:'Driving Safety Assessment',
+      detail:'BC law requires physicians to report patients whose medical condition may impair driving. From age 70+, an annual discussion of vision, cognition, medications, and reaction time is recommended. ICBC offers voluntary driver assessments.',
+      freq:'Annual from age 70', urgency: age>=70 ? 'due-soon' : 'upcoming',
+      tags:['ICBC','BCMA'],
+      source:'https://www.icbc.com/driver-licensing/mature-drivers',
+      toolLink:'https://www.icbc.com/driver-licensing/mature-drivers/Pages/voluntary-driving-assessment.aspx',
+      toolLabel:'ICBC Voluntary Driving Assessment',
+      intervalMonths:12});
+
+    add({cat:'Fitness & Lifestyle', icon:'💪', name:'Frailty & Muscle Strength Assessment',
+      detail:'Clinical Frailty Scale or SARC-F questionnaire assess sarcopenia and frailty risk in older adults. Resistance training, protein intake ≥1.2g/kg/day, and vitamin D supplementation slow muscle loss. Important predictor of falls, hospitalization, and recovery.',
+      freq:'Annual from age 70', urgency: age>=70 ? 'upcoming' : 'not-due',
+      tags:['Canadian Frailty Network','CSEP'],
+      source:'https://www.frailtynetwork.ca/',
+      toolLink:'https://www.mdcalc.com/calc/10083/sarc-f-score-sarcopenia',
+      toolLabel:'SARC-F Questionnaire (MDCalc)',
+      intervalMonths:12});
+  }
+
+  // Preconception / reproductive
+  if (isF && h(rhx,'planning pregnancy')) {
+    add({cat:'Fitness & Lifestyle', icon:'🤰', name:'Preconception Counselling',
+      detail:'Before pregnancy: start folic acid 0.4mg/day (high-risk 4mg/day) at least 3 months before conception. Review medications, immunizations, genetic carrier screening, dental health, mental health, alcohol/substance use, and workplace exposures with your physician.',
+      freq:'Before conception — schedule dedicated visit', urgency:'overdue',
+      tags:['SOGC','PHAC'],
+      source:'https://www.sogc.org/common/Uploaded%20files/Guidelines/j170CPG0609E.pdf',
+      intervalMonths:0});
+  }
+
+  // Radon counselling
+  if (h(env,'radon')) {
+    add({cat:'Fitness & Lifestyle', icon:'☢️', name:'Home Radon Testing',
+      detail:'Radon is the second leading cause of lung cancer in Canada, responsible for ~3,200 deaths/year. Health Canada recommends testing all homes — especially basements and rural areas. Long-term digital radon monitors (~$150) measure over 90 days. Mitigation is effective and affordable.',
+      freq:'One-time home test; retest after any major renovation', urgency:'due-soon',
+      tags:['Health Canada','Canadian Cancer Society'],
+      source:'https://www.canada.ca/en/health-canada/services/environmental-workplace-health/radiation/radon.html',
+      intervalMonths:0});
+  }
+
+  add({cat:'Fitness & Lifestyle', icon:'🌞', name:'Sun Protection (Daily SPF 30+)',
+    detail:'Broad-spectrum SPF 30+ daily on face and exposed skin year-round. Avoid peak UV (10am–4pm). Protective clothing, wide-brim hat, and sunglasses. Monthly full-body skin self-exam. Tanning beds significantly increase melanoma risk — the BC Cancer Society recommends complete avoidance.',
+    freq:'Daily habit', urgency:'not-due',
+    tags:['Health Canada','ACS'],
+    source:'https://www.canada.ca/en/health-canada/services/sun-safety.html',
+    intervalMonths:0});
+
+  // ---- RENDER ----
+  ROS.other = (document.getElementById('ros-other')||{}).value || '';
+  renderResults(items);
+  show('results');
+}
+
+// =========================================================
+// RENDER
+// =========================================================
+function renderResults(items) {
+  var age = S.age, sex = S.sex||'X';
+  var overdue = items.filter(function(i){return i.urgency==='overdue';});
+  var dueSoon = items.filter(function(i){return i.urgency==='due-soon';});
+  var upcoming = items.filter(function(i){return i.urgency==='upcoming';});
+  var highRisk = items.filter(function(i){return i.highRisk;});
+  var today = new Date();
+  var dateStr = today.toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
+  var sexLabel = {M:'Male',F:'Female',X:'Non-binary'}[sex]||'';
+
+  // Group by category
+  var cats = {};
+  items.forEach(function(item){
+    if (!cats[item.cat]) cats[item.cat]=[];
+    cats[item.cat].push(item);
+  });
+
+  var catIcons = {
+    'Cancer Screening':'🔬','Cardiovascular':'❤️','Metabolic & Bone Health':'🦴',
+    'Mental Health':'🧠','Infectious Disease':'🦠','Immunizations':'💉',
+    'Vision & Hearing':'👁','Dental & Oral Health':'🦷','Fitness & Lifestyle':'💪'
+  };
+
+  var urgLabel = {overdue:'🔴 Overdue','due-soon':'🟡 Due Soon',upcoming:'🟢 Upcoming','not-due':'⚪ Not Due Yet'};
+  var urgTagClass = {overdue:'tag-red','due-soon':'tag-amber',upcoming:'tag-green','not-due':'tag-gray'};
+
+  // Completion tracking
+  var totalCompleted = 0;
+
+  var h = '';
+
+  // Header
+  h += '<div class="res-header ani">';
+  h += '<div style="font-size:52px;flex-shrink:0">🌿</div>';
+  h += '<div class="res-header-info">';
+  h += '<h2>Your Health Maintenance Schedule</h2>';
+  h += '<p>Age '+((age||'?'))+' · '+sexLabel+' · Generated '+dateStr+'</p>';
+  h += '<p style="margin-top:3px;opacity:.55;font-size:11px">USPSTF · Canadian Task Force · ACS · ACC/AHA · NACI · Osteoporosis Canada · Diabetes Canada · BC CDC</p>';
+  h += '</div></div>';
+
+  // Progress bar
+  var totalDone = items.filter(function(i){ return S.lastDone['item-'+i.name.replace(/[^a-z0-9]/gi,'')]; }).length;
+  var pct = items.length > 0 ? Math.round((totalDone/items.length)*100) : 0;
+  h += '<div class="progress-wrap ani no-print">';
+  h += '<div class="progress-label"><span>Health Maintenance Progress</span><span>'+pct+'% tracked ('+totalDone+'/'+items.length+')</span></div>';
+  h += '<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
+  h += '</div>';
+
+  // ROS Summary
+  h += buildRosSummaryHtml();
+
+  // Stats
+  h += '<div class="stats ani">';
+  h += '<div class="stat s-red"><div class="stat-n">'+overdue.length+'</div><div class="stat-l">Overdue</div></div>';
+  h += '<div class="stat s-amber"><div class="stat-n">'+dueSoon.length+'</div><div class="stat-l">Due Soon</div></div>';
+  h += '<div class="stat s-green"><div class="stat-n">'+upcoming.length+'</div><div class="stat-l">Upcoming</div></div>';
+  h += '<div class="stat s-gray"><div class="stat-n">'+items.length+'</div><div class="stat-l">Total Items</div></div>';
+  h += '</div>';
+
+  // Print bar
+  h += '<div class="print-bar no-print ani">';
+  h += '<div><strong>Take this to your next appointment</strong><p>Discuss overdue and due-soon items with your physician. Record completion dates below each item — they\'re saved in your browser.</p></div>';
+  h += '<div style="display:flex;gap:9px;flex-shrink:0">';
+  h += '<button class="btn btn-secondary btn-sm" onclick="show(\'risk\')">← Edit</button>';
+  h += '<button class="btn btn-amber btn-sm" onclick="window.print()">🖨 Print / PDF</button>';
+  h += '</div></div>';
+
+  // Disclaimer
+  h += '<div class="disclaimer ani"><strong>⚠ Medical Disclaimer</strong>This schedule is for informational purposes only and is not a substitute for individualized medical advice. Recommendations are based on published population-level guidelines and may not apply to your specific clinical situation. Always discuss screening decisions with a qualified healthcare provider.</div>';
+
+  // Filter tabs
+  h += '<div class="filter-tabs no-print ani">';
+  var tabs = [
+    {key:'all',label:'All',count:items.length},
+    {key:'overdue',label:'🔴 Overdue',count:overdue.length},
+    {key:'due-soon',label:'🟡 Due Soon',count:dueSoon.length},
+    {key:'upcoming',label:'🟢 Upcoming',count:upcoming.length},
+    {key:'high-risk',label:'⚠ High Risk',count:highRisk.length},
+  ];
+  tabs.forEach(function(t,i){
+    h += '<button class="ftab'+(i===0?' on':'')+'" onclick="filterTab(\''+t.key+'\',this)">'+t.label+' <span class="tc">'+t.count+'</span></button>';
+  });
+  h += '</div>';
+
+  // Items by category
+  h += '<div id="items-wrap">';
+  Object.keys(cats).forEach(function(cat){
+    h += '<div class="sgroup ani" data-cat="'+cat+'">';
+    h += '<div class="sgroup-title">'+(catIcons[cat]||'📋')+' '+cat+'</div>';
+    cats[cat].forEach(function(item, idx){
+      var uclass = item.urgency;
+      var itemId = 'item-'+cat.replace(/[^a-z0-9]/gi,'')+idx;
+      var savedDate = S.lastDone[itemId]||'';
+      var nextDue = '';
+      if (savedDate && item.intervalMonths>0) {
+        var d = new Date(savedDate);
+        d.setMonth(d.getMonth()+item.intervalMonths);
+        nextDue = 'Next due: '+d.toLocaleDateString('en-CA',{year:'numeric',month:'short'});
+      }
+      h += '<div class="sitem '+uclass+'" id="'+itemId+'" data-urgency="'+uclass+'" data-highrisk="'+(item.highRisk?'1':'0')+'">';
+      h += '<div class="sitem-icon">'+item.icon+'</div>';
+      h += '<div class="sitem-body">';
+      h += '<div class="sitem-name">'+item.name+'</div>';
+      h += '<div class="sitem-detail">'+item.detail+'</div>';
+      h += '<div class="tags">';
+      h += '<span class="tag '+urgTagClass[uclass]+'">'+urgLabel[uclass]+'</span>';
+      if (item.freq) h += '<span class="tag tag-blue">🔁 '+item.freq+'</span>';
+      if (item.highRisk) h += '<span class="tag tag-red">⚠ High Risk</span>';
+      (item.tags||[]).forEach(function(t){ h += '<span class="tag tag-gray">'+t+'</span>'; });
+      h += '</div>';
+      // Last done row
+      h += '<div class="last-done-row">';
+      h += '<label>Last done:</label>';
+      h += '<input type="date" value="'+savedDate+'" onchange="markDone(\''+itemId+'\',this.value)" title="When did you last have this done?">';
+      if (savedDate) h += '<span class="done-badge" id="badge-'+itemId+'" style="display:inline-block">✓ Recorded</span>';
+      if (nextDue) h += '<span class="next-due">'+nextDue+'</span>';
+      if (item.toolLink) h += '<a class="tool-link no-print" href="'+item.toolLink+'" target="_blank" rel="noopener">📋 '+item.toolLabel+'</a>';
+      if (item.source) h += '<a class="src-link no-print" href="'+item.source+'" target="_blank" rel="noopener">📎 Guideline</a>';
+      h += '</div>';
+      h += '</div></div>';
+    });
+    h += '</div>';
+  });
+  h += '</div>';
+
+  // Footer
+  h += '<div style="text-align:center;padding:28px 0 0;color:var(--text-muted);font-size:11px;line-height:1.8">';
+  h += '<strong style="color:var(--amber)">Narra Health</strong> · Personal Health Maintenance Tool<br>';
+  h += 'narrahealth.ca · Guidelines current to 2024–2025<br>';
+  h += 'USPSTF · Canadian Task Force · ACS · ACC/AHA · NACI · BC Cancer · BC CDC · Osteoporosis Canada · Diabetes Canada';
+  h += '</div>';
+
+  document.getElementById('res').innerHTML = h;
+}
+
+function filterTab(key, btn) {
+  document.querySelectorAll('.ftab').forEach(function(t){ t.classList.remove('on'); });
+  btn.classList.add('on');
+  document.querySelectorAll('.sitem').forEach(function(el){
+    var show = key==='all' || el.dataset.urgency===key || (key==='high-risk'&&el.dataset.highrisk==='1');
+    el.style.display = show ? 'flex' : 'none';
+  });
+  document.querySelectorAll('.sgroup').forEach(function(g){
+    if (key==='all'){g.style.display='block';return;}
+    var vis = Array.from(g.querySelectorAll('.sitem')).some(function(el){ return el.style.display!=='none'; });
+    g.style.display = vis ? 'block' : 'none';
+  });
+}
+
+function markDone(id, val) {
+  S.lastDone[id] = val;
+  try { localStorage.setItem('narra_hm_lastdone', JSON.stringify(S.lastDone)); } catch(e){}
+  var badge = document.getElementById('badge-'+id);
+  if (badge) badge.style.display = val ? 'inline-block' : 'none';
+  // Update next-due display
+  // (simplified — would need item interval data to recalculate)
+}
+
+// Init
+(function(){
+  var today = new Date();
+  var el = document.getElementById('dob');
+  if (el) el.max = today.toISOString().split('T')[0];
+  try {
+    var saved = localStorage.getItem('narra_hm_lastdone');
+    if (saved) S.lastDone = JSON.parse(saved);
+  } catch(e){}
+})();
+</script>
+</body>
+</html>
